@@ -1,0 +1,27 @@
+{
+  "name": "tasknova",
+  "version": "1.0.0",
+  "description": "TaskNova — a modern SaaS Kanban application built with React, Express, and Node.js",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "node server/server.js",
+    "dev": "node server/server.js",
+    "client": "cd client && npm run dev",
+    "build": "cd client && npm run build"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  },
+  "keywords": [
+    "tasknova",
+    "kanban",
+    "saas",
+    "react",
+    "express",
+    "node"
+  ],
+  "author": "TaskNova",
+  "license": "MIT"
+}
