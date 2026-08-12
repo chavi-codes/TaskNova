@@ -97,7 +97,7 @@ export default function LoginModal({ onClose, onSwitchToSignup }) {
                 checked={form.rememberMe}
                 onChange={(e) => setForm({ ...form, rememberMe: e.target.checked })}
               />
-              <span>Remember Me</span>
+              <span>Remember me</span>
             </label>
             <button type="button" className="forgot-link" onClick={handleForgotPassword}>
               Forgot password?
