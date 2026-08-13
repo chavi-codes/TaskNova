@@ -505,14 +505,14 @@ body {
 }
 .modal-content {
   background: #323940;
-  width: 680px;
-  max-width: 90vw;
-  max-height: 85vh;
-  border-radius: var(--radius-md);
-  padding: 24px;
+  width: 920px;
+  max-width: 95vw;
+  max-height: 90vh;
+  border-radius: var(--radius-lg);
+  padding: 28px;
   color: #b6c2cf;
   overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .modal-header {
@@ -1889,3 +1889,225 @@ body {
 [data-theme='light'] ::-webkit-scrollbar-thumb:hover {
   background: #C7CDD6;
 }
+
+/* Side-by-side Labels + Subtasks row */
+.modal-row-side-by-side {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.modal-section-half {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .modal-row-side-by-side {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* Subtasks styles */
+.subtasks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.subtasks-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-weight: 600;
+}
+
+.subtask-add-btn-icon {
+  background: none;
+  border: none;
+  color: #b6c2cf;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.subtask-add-btn-icon:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.subtasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.subtask-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+}
+
+.subtask-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.subtask-item.todo {
+  border-left: 3px solid #64748b;
+}
+
+.subtask-item.in_progress {
+  border-left: 3px solid #0284c7;
+}
+
+.subtask-item.done {
+  border-left: 3px solid #10b981;
+}
+
+.subtask-text-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  padding: 2px 4px;
+}
+
+.subtask-text-input:focus {
+  background: #22272b;
+  border-radius: 4px;
+}
+
+.subtask-text-span {
+  flex: 1;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.subtask-text-span.done {
+  text-decoration: line-through;
+  color: #64748b;
+}
+
+.subtask-status-select {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: white;
+  font-size: 13px;
+  padding: 6px 10px;
+  outline: none;
+  cursor: pointer;
+  width: 110px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.subtask-status-select:focus {
+  border-color: #0065ff;
+}
+
+.subtask-delete-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.subtask-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.subtask-progress-bar-container {
+  display: flex;
+  width: 100%;
+  height: 8px;
+  background: #22272b;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.subtask-progress-bar-done {
+  height: 100%;
+  background: #10b981;
+  transition: width 0.3s ease;
+}
+
+.subtask-progress-bar-in-progress {
+  height: 100%;
+  background: #0284c7;
+  transition: width 0.3s ease;
+}
+
+.subtask-progress-bar-todo {
+  height: 100%;
+  background: transparent;
+  transition: width 0.3s ease;
+}
+
+.subtask-percentage-text {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+  text-align: right;
+}
+
+/* Custom label dropdown items styling to prevent vertical overlap */
+.labels-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #e2e8f0;
+  cursor: pointer;
+  text-align: left;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 2px;
+  transition: background 0.15s ease;
+}
+
+.labels-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.labels-dropdown-item.active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+
