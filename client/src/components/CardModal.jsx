@@ -13,7 +13,9 @@ import {
   Search,
   Settings,
   Pencil,
-  Trash
+  Trash,
+  Link,
+  Briefcase
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -50,6 +52,7 @@ export default function CardModal({
   const [title, setTitle] = useState(card.title || '');
   const [description, setDescription] = useState(card.description || '');
   const [dueDate, setDueDate] = useState(card.dueDate || '');
+  const [typeOfWork, setTypeOfWork] = useState(card.typeOfWork || 'task');
 
   const [newChecklistItem, setNewChecklistItem] = useState('');
   const [checklist, setChecklist] = useState(card.checklist || []);
@@ -132,7 +135,8 @@ export default function CardModal({
       checklist,
       labels,
       comments,
-      subtasks
+      subtasks,
+      typeOfWork
     });
 
     if (targetListId !== listId) {
@@ -195,7 +199,9 @@ export default function CardModal({
               dueDate,
               checklist: updated,
               labels,
-              comments
+              comments,
+              subtasks,
+              typeOfWork
             });
 
             await onMoveCard(
@@ -225,7 +231,8 @@ export default function CardModal({
         checklist: pendingChecklist || checklist,
         labels,
         comments,
-        subtasks
+        subtasks,
+        typeOfWork
       });
 
       onMoveCard(card.id, listId, doneList.id);
@@ -247,7 +254,8 @@ export default function CardModal({
       checklist: updatedChecklist,
       labels,
       comments,
-      subtasks
+      subtasks,
+      typeOfWork
     });
 
     setShowMoveConfirm(false);
@@ -277,7 +285,36 @@ export default function CardModal({
       checklist,
       labels: updatedLabels,
       comments,
-      subtasks
+      subtasks,
+      typeOfWork
+    });
+  };
+
+  const handleClearLabels = () => {
+    setLabels([]);
+    onUpdateCard(card.id, {
+      title,
+      description,
+      dueDate,
+      checklist,
+      labels: [],
+      comments,
+      subtasks,
+      typeOfWork
+    });
+  };
+
+  const handleUpdateTypeOfWork = (val) => {
+    setTypeOfWork(val);
+    onUpdateCard(card.id, {
+      title,
+      description,
+      dueDate,
+      checklist,
+      labels,
+      comments,
+      subtasks,
+      typeOfWork: val
     });
   };
 
@@ -306,7 +343,8 @@ export default function CardModal({
       checklist,
       labels,
       comments,
-      subtasks: updated
+      subtasks: updated,
+      typeOfWork
     });
   };
 
@@ -323,7 +361,8 @@ export default function CardModal({
       checklist,
       labels,
       comments,
-      subtasks: updated
+      subtasks: updated,
+      typeOfWork
     });
   };
 
@@ -343,7 +382,8 @@ export default function CardModal({
       checklist,
       labels,
       comments,
-      subtasks: updated
+      subtasks: updated,
+      typeOfWork
     });
   };
 
@@ -367,7 +407,8 @@ export default function CardModal({
       checklist,
       labels,
       comments,
-      subtasks: updated
+      subtasks: updated,
+      typeOfWork
     });
   };
 
@@ -604,9 +645,51 @@ export default function CardModal({
             <div className="modal-row-side-by-side">
               {/* LEFT: LABELS */}
               <div className="modal-section-half">
-                <div className="section-title">
-                  <Tag size={16} />
-                  <span>Labels</span>
+                <div className="section-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Tag size={16} />
+                    <span>Labels</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setLabelsOpen(!labelsOpen)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#b6c2cf',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      title="Select & Customize Labels"
+                      className="label-action-btn"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleClearLabels}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#b6c2cf',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      title="Clear Labels"
+                      className="label-action-btn"
+                    >
+                      <Trash size={14} />
+                    </button>
+                  </div>
                 </div>
 
                 <div
@@ -615,34 +698,6 @@ export default function CardModal({
                     marginTop: '10px'
                   }}
                 >
-                  <button
-                    type="button"
-                    className="modal-select"
-                    onClick={() =>
-                      setLabelsOpen(!labelsOpen)
-                    }
-                    style={{
-                      width: '100%',
-                      minHeight: '38px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <span>
-                      {labels.length > 0
-                        ? `${labels.length} label${
-                            labels.length > 1
-                              ? 's'
-                              : ''
-                          } selected`
-                        : 'Select labels'}
-                    </span>
-
-                    <span>▼</span>
-                  </button>
-
                   {/* SELECTED LABEL CHIPS */}
                   {labels.length > 0 && (
                     <div
@@ -650,7 +705,8 @@ export default function CardModal({
                         display: 'flex',
                         flexWrap: 'wrap',
                         gap: '6px',
-                        marginTop: '8px'
+                        marginTop: '8px',
+                        marginBottom: '8px'
                       }}
                     >
                       {labels.map((label) => (
@@ -661,156 +717,181 @@ export default function CardModal({
                             backgroundColor: label.color,
                             opacity: 1,
                             padding: '4px 9px'
-                        }}
-                      >
-                        {label.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* DROPDOWN */}
-                {labelsOpen && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '44px',
-                      left: 0,
-                      minWidth: '200px',
-                      width: '100%',
-                      zIndex: 50,
-                      background: '#111827',
-                      border: '1px solid #334155',
-                      borderRadius: '10px',
-                      padding: '8px',
-                      boxShadow:
-                        '0 18px 40px rgba(0,0,0,.45)'
-                    }}
-                  >
-                    <div
-                      style={{
-                        maxHeight: '190px',
-                        overflowY: 'auto'
-                      }}
-                    >
-                      {availableLabels.map(
-                        (label) => {
-                          const active =
-                            labels.some(
-                              (item) =>
-                                item.id === label.id
-                            );
-
-                          return (
-                            <div
-                              key={label.id}
-                              role="button"
-                              onClick={() => {
-                                toggleLabel(label);
-                                setLabelsOpen(false);
-                              }}
-                              className={`labels-dropdown-item ${active ? 'active' : ''}`}
-                            >
-                              <span
-                                style={{
-                                  width: '9px',
-                                  height: '9px',
-                                  borderRadius:
-                                    '50%',
-                                  backgroundColor:
-                                    label.color,
-                                  flexShrink: 0
-                                }}
-                              />
-
-                              <span
-                                style={{
-                                  flex: 1
-                                }}
-                              >
-                                {label.name}
-                              </span>
-
-                              {active && (
-                                <span>
-                                  ✓
-                                </span>
-                              )}
-                            </div>
-                          );
-                        }
-                      )}
-
-                      {availableLabels.length ===
-                        0 && (
-                        <div
-                          style={{
-                            padding: '12px',
-                            color: '#94a3b8',
-                            fontSize: '12px',
-                            textAlign: 'center'
                           }}
                         >
-                          No labels found
-                        </div>
-                      )}
+                          {label.name}
+                        </span>
+                      ))}
                     </div>
+                  )}
 
+                  {/* DROPDOWN */}
+                  {labelsOpen && (
                     <div
                       style={{
-                        borderTop:
-                          '1px solid #334155',
-                        marginTop: '7px',
-                        paddingTop: '7px'
+                        position: 'absolute',
+                        top: '10px',
+                        left: 0,
+                        minWidth: '200px',
+                        width: '100%',
+                        zIndex: 50,
+                        background: '#111827',
+                        border: '1px solid #334155',
+                        borderRadius: '10px',
+                        padding: '8px',
+                        boxShadow:
+                          '0 18px 40px rgba(0,0,0,.45)'
                       }}
                     >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setLabelsOpen(false);
-                          setShowAddLabel(true);
-                        }}
+                      <div
                         style={{
-                          width: '100%',
-                          border: 'none',
-                          background:
-                            'transparent',
-                          color: '#cbd5e1',
-                          padding: '8px',
-                          textAlign: 'left',
-                          cursor: 'pointer'
+                          maxHeight: '190px',
+                          overflowY: 'auto'
                         }}
                       >
-                        <Plus size={14} /> Add label
-                      </button>
+                        {availableLabels.map(
+                          (label) => {
+                            const active =
+                              labels.some(
+                                (item) =>
+                                  item.id === label.id
+                              );
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setLabelsOpen(false);
-                          setShowManageLabels(
-                            true
-                          );
-                        }}
+                            return (
+                              <div
+                                key={label.id}
+                                role="button"
+                                onClick={() => {
+                                  toggleLabel(label);
+                                  setLabelsOpen(false);
+                                }}
+                                className={`labels-dropdown-item ${active ? 'active' : ''}`}
+                              >
+                                <span
+                                  style={{
+                                    width: '9px',
+                                    height: '9px',
+                                    borderRadius:
+                                      '50%',
+                                    backgroundColor:
+                                      label.color,
+                                    flexShrink: 0
+                                  }}
+                                />
+
+                                <span
+                                  style={{
+                                    flex: 1
+                                  }}
+                                >
+                                  {label.name}
+                                </span>
+
+                                {active && (
+                                  <span>
+                                    ✓
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          }
+                        )}
+
+                        {availableLabels.length ===
+                          0 && (
+                          <div
+                            style={{
+                              padding: '12px',
+                              color: '#94a3b8',
+                              fontSize: '12px',
+                              textAlign: 'center'
+                            }}
+                          >
+                            No labels found
+                          </div>
+                        )}
+                      </div>
+
+                      <div
                         style={{
-                          width: '100%',
-                          border: 'none',
-                          background:
-                            'transparent',
-                          color: '#cbd5e1',
-                          padding: '8px',
-                          textAlign: 'left',
-                          cursor: 'pointer'
+                          borderTop:
+                            '1px solid #334155',
+                          marginTop: '7px',
+                          paddingTop: '7px'
                         }}
                       >
-                        <Settings size={14} /> Manage
-                        labels
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLabelsOpen(false);
+                            setShowAddLabel(true);
+                          }}
+                          style={{
+                            width: '100%',
+                            border: 'none',
+                            background:
+                              'transparent',
+                            color: '#cbd5e1',
+                            padding: '8px',
+                            textAlign: 'left',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <Plus size={14} /> Add label
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLabelsOpen(false);
+                            setShowManageLabels(
+                              true
+                            );
+                          }}
+                          style={{
+                            width: '100%',
+                            border: 'none',
+                            background:
+                              'transparent',
+                            color: '#cbd5e1',
+                            padding: '8px',
+                            textAlign: 'left',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <Settings size={14} /> Manage
+                          labels
+                        </button>
+                      </div>
                     </div>
+                  )}
+                </div>
+
+                {/* TYPE OF WORK */}
+                <div style={{ marginTop: '20px' }}>
+                  <div className="section-title">
+                    <Briefcase size={16} />
+                    <span>Type of Work</span>
                   </div>
-                )}
+                  <select
+                    value={typeOfWork}
+                    onChange={(e) => handleUpdateTypeOfWork(e.target.value)}
+                    className="subtask-status-select"
+                    style={{
+                      width: '100%',
+                      marginTop: '8px',
+                      padding: '8px 12px',
+                      fontSize: '14px',
+                      height: '38px',
+                      textAlign: 'left'
+                    }}
+                  >
+                    <option value="task">task</option>
+                    <option value="subtask">subtask</option>
+                    <option value="bug">bug</option>
+                  </select>
+                </div>
               </div>
-            </div>
 
             {/* RIGHT: SUBTASKS */}
             <div className="modal-section-half">
@@ -987,7 +1068,7 @@ export default function CardModal({
               />
             </div>
 
-            {/* CHECKLIST - EXISTING FEATURE */}
+            {/* ASSOCIATE TASK - REPLACES CHECKLIST */}
             <div className="modal-section">
               <div
                 className="section-title"
@@ -1003,9 +1084,9 @@ export default function CardModal({
                     gap: '8px'
                   }}
                 >
-                  <CheckSquare size={16} />
+                  <Link size={16} />
                   <span>
-                    Checklist ({progressPercent}%)
+                    Associate Task ({progressPercent}%)
                   </span>
                 </div>
               </div>
@@ -1062,7 +1143,7 @@ export default function CardModal({
                 <input
                   type="text"
                   className="modal-mini-input"
-                  placeholder="Add item..."
+                  placeholder="Add task association..."
                   value={newChecklistItem}
                   onChange={(e) =>
                     setNewChecklistItem(
