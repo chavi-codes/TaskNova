@@ -653,7 +653,7 @@ export default function CardModal({
                   <div style={{ display: 'flex', gap: '6px' }}>
                     <button
                       type="button"
-                      onClick={() => setLabelsOpen(!labelsOpen)}
+                      onClick={() => setShowManageLabels(true)}
                       style={{
                         background: 'none',
                         border: 'none',
@@ -665,7 +665,7 @@ export default function CardModal({
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}
-                      title="Select & Customize Labels"
+                      title="Manage & Select Labels"
                       className="label-action-btn"
                     >
                       <Pencil size={14} />
@@ -694,7 +694,6 @@ export default function CardModal({
 
                 <div
                   style={{
-                    position: 'relative',
                     marginTop: '10px'
                   }}
                 >
@@ -722,147 +721,6 @@ export default function CardModal({
                           {label.name}
                         </span>
                       ))}
-                    </div>
-                  )}
-
-                  {/* DROPDOWN */}
-                  {labelsOpen && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '10px',
-                        left: 0,
-                        minWidth: '200px',
-                        width: '100%',
-                        zIndex: 50,
-                        background: '#111827',
-                        border: '1px solid #334155',
-                        borderRadius: '10px',
-                        padding: '8px',
-                        boxShadow:
-                          '0 18px 40px rgba(0,0,0,.45)'
-                      }}
-                    >
-                      <div
-                        style={{
-                          maxHeight: '190px',
-                          overflowY: 'auto'
-                        }}
-                      >
-                        {availableLabels.map(
-                          (label) => {
-                            const active =
-                              labels.some(
-                                (item) =>
-                                  item.id === label.id
-                              );
-
-                            return (
-                              <div
-                                key={label.id}
-                                role="button"
-                                onClick={() => {
-                                  toggleLabel(label);
-                                  setLabelsOpen(false);
-                                }}
-                                className={`labels-dropdown-item ${active ? 'active' : ''}`}
-                              >
-                                <span
-                                  style={{
-                                    width: '9px',
-                                    height: '9px',
-                                    borderRadius:
-                                      '50%',
-                                    backgroundColor:
-                                      label.color,
-                                    flexShrink: 0
-                                  }}
-                                />
-
-                                <span
-                                  style={{
-                                    flex: 1
-                                  }}
-                                >
-                                  {label.name}
-                                </span>
-
-                                {active && (
-                                  <span>
-                                    ✓
-                                  </span>
-                                )}
-                              </div>
-                            );
-                          }
-                        )}
-
-                        {availableLabels.length ===
-                          0 && (
-                          <div
-                            style={{
-                              padding: '12px',
-                              color: '#94a3b8',
-                              fontSize: '12px',
-                              textAlign: 'center'
-                            }}
-                          >
-                            No labels found
-                          </div>
-                        )}
-                      </div>
-
-                      <div
-                        style={{
-                          borderTop:
-                            '1px solid #334155',
-                          marginTop: '7px',
-                          paddingTop: '7px'
-                        }}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setLabelsOpen(false);
-                            setShowAddLabel(true);
-                          }}
-                          style={{
-                            width: '100%',
-                            border: 'none',
-                            background:
-                              'transparent',
-                            color: '#cbd5e1',
-                            padding: '8px',
-                            textAlign: 'left',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <Plus size={14} /> Add label
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setLabelsOpen(false);
-                            setShowManageLabels(
-                              true
-                            );
-                          }}
-                          style={{
-                            width: '100%',
-                            border: 'none',
-                            background:
-                              'transparent',
-                            color: '#cbd5e1',
-                            padding: '8px',
-                            textAlign: 'left',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <Settings size={14} /> Manage
-                          labels
-                        </button>
-                      </div>
                     </div>
                   )}
                 </div>
@@ -1455,14 +1313,35 @@ export default function CardModal({
                 Manage Labels
               </h3>
 
-              <button
-                className="modal-close-btn"
-                onClick={() =>
-                  setShowManageLabels(false)
-                }
-              >
-                <X size={18} />
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                  type="button"
+                  className="btn-create"
+                  onClick={() => {
+                    setShowManageLabels(false);
+                    setShowAddLabel(true);
+                  }}
+                  style={{
+                    padding: '4px 10px',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    height: '28px'
+                  }}
+                >
+                  <Plus size={12} /> Add Label
+                </button>
+
+                <button
+                  className="modal-close-btn"
+                  onClick={() =>
+                    setShowManageLabels(false)
+                  }
+                >
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
             {availableLabels.map(
@@ -1537,6 +1416,28 @@ export default function CardModal({
                     </>
                   ) : (
                     <>
+                      {labels.some((l) => l.id === label.id) ? (
+                        <CheckSquare
+                          size={16}
+                          style={{
+                            color: label.color,
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                          onClick={() => toggleLabel(label)}
+                        />
+                      ) : (
+                        <Square
+                          size={16}
+                          style={{
+                            color: '#64748b',
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                          onClick={() => toggleLabel(label)}
+                        />
+                      )}
+
                       <span
                         style={{
                           width: '10px',
@@ -1544,15 +1445,18 @@ export default function CardModal({
                           borderRadius:
                             '50%',
                           backgroundColor:
-                            label.color
+                            label.color,
+                          flexShrink: 0
                         }}
                       />
 
                       <span
                         style={{
                           flex: 1,
-                          color: '#e2e8f0'
+                          color: '#e2e8f0',
+                          cursor: 'pointer'
                         }}
+                        onClick={() => toggleLabel(label)}
                       >
                         {label.name}
                       </span>
