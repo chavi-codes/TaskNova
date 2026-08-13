@@ -19,11 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const DEFAULT_LABELS = [
-  { id: 'task', name: 'Task', color: '#3b82f6', system: true },
-  { id: 'subtask', name: 'Subtask', color: '#8b5cf6', system: true },
-  { id: 'bug', name: 'Bug', color: '#ef4444', system: true }
-];
+const DEFAULT_LABELS = [];
 
 const PRESET_COLORS = [
   '#3b82f6', // Blue
@@ -545,13 +541,6 @@ export default function CardModal({
   };
 
   const deleteLabel = async (label) => {
-    if (label.system) {
-      alert(
-        'Task, Subtask and Bug are default labels and cannot be deleted.'
-      );
-      return;
-    }
-
     const confirmed = window.confirm(
       `Delete "${label.name}" label?`
     );
@@ -731,23 +720,110 @@ export default function CardModal({
                     <Briefcase size={16} />
                     <span>Type of Work</span>
                   </div>
-                  <select
-                    value={typeOfWork}
-                    onChange={(e) => handleUpdateTypeOfWork(e.target.value)}
-                    className="subtask-status-select"
+                  <div
                     style={{
-                      width: '100%',
+                      display: 'flex',
+                      gap: '6px',
                       marginTop: '8px',
-                      padding: '8px 12px',
-                      fontSize: '14px',
-                      height: '38px',
-                      textAlign: 'left'
+                      background: '#0f172a',
+                      padding: '4px',
+                      borderRadius: '8px',
+                      border: '1px solid #334155'
                     }}
                   >
-                    <option value="task">task</option>
-                    <option value="subtask">subtask</option>
-                    <option value="bug">bug</option>
-                  </select>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateTypeOfWork('task')}
+                      style={{
+                        flex: 1,
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        background: typeOfWork === 'task' ? '#3b82f6' : 'transparent',
+                        color: typeOfWork === 'task' ? '#ffffff' : '#94a3b8',
+                        fontSize: '13px',
+                        fontWeight: typeOfWork === 'task' ? '600' : '500',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease-in-out'
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          backgroundColor: typeOfWork === 'task' ? '#ffffff' : '#3b82f6'
+                        }}
+                      />
+                      Task
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateTypeOfWork('subtask')}
+                      style={{
+                        flex: 1,
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        background: typeOfWork === 'subtask' ? '#8b5cf6' : 'transparent',
+                        color: typeOfWork === 'subtask' ? '#ffffff' : '#94a3b8',
+                        fontSize: '13px',
+                        fontWeight: typeOfWork === 'subtask' ? '600' : '500',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease-in-out'
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          backgroundColor: typeOfWork === 'subtask' ? '#ffffff' : '#8b5cf6'
+                        }}
+                      />
+                      Subtask
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateTypeOfWork('bug')}
+                      style={{
+                        flex: 1,
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        background: typeOfWork === 'bug' ? '#ef4444' : 'transparent',
+                        color: typeOfWork === 'bug' ? '#ffffff' : '#94a3b8',
+                        fontSize: '13px',
+                        fontWeight: typeOfWork === 'bug' ? '600' : '500',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease-in-out'
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          backgroundColor: typeOfWork === 'bug' ? '#ffffff' : '#ef4444'
+                        }}
+                      />
+                      Bug
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -1461,16 +1537,7 @@ export default function CardModal({
                         {label.name}
                       </span>
 
-                      {label.system && (
-                        <span
-                          style={{
-                            fontSize: '10px',
-                            color: '#64748b'
-                          }}
-                        >
-                          Default
-                        </span>
-                      )}
+
 
                       <button
                         className="side-btn"

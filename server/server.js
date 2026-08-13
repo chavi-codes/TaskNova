@@ -95,6 +95,7 @@ function createDefaultBoard() {
   return {
     title: 'My Board',
     background: 'linear-gradient(135deg, #2b1055 0%, #7597de 50%, #462066 100%)',
+    labels: [],
     lists: [
       { id: 'list-inbox', title: 'Inbox', color: '#1e293b', isInbox: true, cards: [] },
       ...COLUMN_TITLES.map((title, i) => ({
@@ -233,6 +234,80 @@ app.put('/api/board', requireAuth, (req, res) => {
   data.workspaces[req.userId] = { board: req.body };
   saveData(data);
   res.json({ success: true, board: data.workspaces[req.userId].board });
+});
+
+// Get all labels for the current board
+app.get('/api/labels', requireAuth, (req, res) => {
+  const data = req._data;
+  const board = getUserBoard(data, req.userId);
+  if (!board.labels) board.labels = [];
+  res.json({ labels: board.labels });
+});
+
+// Create a new label on the current board
+app.post('/api/labels', requireAuth, (req, res) => {
+  const { name, color } = req.body || {};
+  if (!name) return res.status(400).json({ error: 'Label name is required' });
+
+  const data = req._data;
+  const board = getUserBoard(data, req.userId);
+  if (!board.labels) board.labels = [];
+
+  const newLabel = {
+    id: `label-${crypto.randomBytes(6).toString('hex')}`,
+    name,
+    color: color || '#3b82f6',
+    system: false
+  };
+
+  board.labels.push(newLabel);
+  saveData(data);
+  res.status(201).json({ label: newLabel });
+});
+
+// Update a label on the current board
+app.put('/api/labels/:labelId', requireAuth, (req, res) => {
+  const { labelId } = req.params;
+  const { name, color } = req.body || {};
+
+  const data = req._data;
+  const board = getUserBoard(data, req.userId);
+  if (!board.labels) board.labels = [];
+
+  const label = board.labels.find((l) => l.id === labelId);
+  if (!label) return res.status(404).json({ error: 'Label not found' });
+
+  if (name !== undefined) label.name = name;
+  if (color !== undefined) label.color = color;
+
+  saveData(data);
+  res.json({ label });
+});
+
+// Delete a label on the current board
+app.delete('/api/labels/:labelId', requireAuth, (req, res) => {
+  const { labelId } = req.params;
+
+  const data = req._data;
+  const board = getUserBoard(data, req.userId);
+  if (!board.labels) board.labels = [];
+
+  const index = board.labels.findIndex((l) => l.id === labelId);
+  if (index === -1) return res.status(404).json({ error: 'Label not found' });
+
+  board.labels.splice(index, 1);
+
+  // Also remove this label from all cards on the board
+  for (const list of board.lists) {
+    for (const card of list.cards) {
+      if (Array.isArray(card.labels)) {
+        card.labels = card.labels.filter((l) => l.id !== labelId);
+      }
+    }
+  }
+
+  saveData(data);
+  res.json({ success: true });
 });
 
 app.post('/api/lists', requireAuth, (req, res) => {
