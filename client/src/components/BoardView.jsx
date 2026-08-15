@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { Plus, MoreHorizontal, ArrowRightLeft, Calendar, CheckSquare, Play, Trash2 } from 'lucide-react';
 
+const getContrastColor = (hexColor) => {
+  if (!hexColor) return '#ffffff';
+  const hex = hexColor.replace('#', '');
+  if (hex.length !== 6) return '#ffffff';
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+  return yiq >= 150 ? '#111827' : '#ffffff';
+};
+
 const COLOR_PRESETS = [
   '#431407', // Brown
   '#713f12', // Olive
@@ -110,7 +121,7 @@ export default function BoardView({ lists, searchQuery, onCardClick, onAddCard, 
                 return (
                   <div
                     key={card.id}
-                    className="kanban-card"
+                    className={`kanban-card ${card.typeOfWork ? 'type-' + card.typeOfWork.toLowerCase() : ''}`}
                     draggable
                     onDragStart={() => handleDragStart(card.id, list.id)}
                     onClick={() => onCardClick(card, list.id)}
@@ -130,7 +141,7 @@ export default function BoardView({ lists, searchQuery, onCardClick, onAddCard, 
                           <span
                             key={lbl.id}
                             className="label-pill"
-                            style={{ backgroundColor: lbl.color }}
+                            style={{ backgroundColor: lbl.color, color: getContrastColor(lbl.color) }}
                           >
                             {lbl.name}
                           </span>
@@ -147,8 +158,15 @@ export default function BoardView({ lists, searchQuery, onCardClick, onAddCard, 
                     )}
 
                     {/* Meta Badges */}
-                    {(card.dueDate || totalCheck > 0) && (
+                    {(card.dueDate || totalCheck > 0 || card.typeOfWork) && (
                       <div className="card-meta">
+                        {card.typeOfWork && (
+                          <div className={`card-badge type-${card.typeOfWork.toLowerCase()}`}>
+                            <span className="type-dot">●</span>
+                            <span style={{ textTransform: 'capitalize' }}>{card.typeOfWork}</span>
+                          </div>
+                        )}
+
                         {card.dueDate && (
                           <div className={`card-badge ${new Date(card.dueDate) < new Date() ? 'due' : ''}`}>
                             <Calendar size={12} />

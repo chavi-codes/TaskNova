@@ -1459,24 +1459,42 @@ body {
    ========================================================================== */
 [data-theme='light'] {
   /* TaskNova light theme tokens */
+  --bg-main: #FFFFFF;
+  --bg-secondary: #F8FAFC;
+  --bg-muted: #F1F5F9;
+
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #64748B;
+  --text-placeholder: #94A3B8;
+
+  --border: #CBD5E1;
+
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #DC2626;
+
+  /* Inherited old tokens to keep existing styles working */
   --ln-bg: #F6F8FC;
   --ln-card: #FFFFFF;
   --ln-navbar: #FFFFFF;
-  --ln-primary: #4F46E5;
-  --ln-primary-hover: #4338CA;
-  --ln-success: #22C55E;
-  --ln-danger: #EF4444;
-  --ln-border: #E5E7EB;
+  --ln-primary: #2563EB;
+  --ln-primary-hover: #1D4ED8;
+  --ln-success: #10B981;
+  --ln-danger: #DC2626;
+  --ln-border: #CBD5E1;
   --ln-text: #111827;
-  --ln-text-secondary: #6B7280;
+  --ln-text-secondary: #374151;
 
   --sidebar-bg: var(--ln-navbar);
   --sidebar-border: var(--ln-border);
   --header-bg: rgba(255, 255, 255, 0.92);
   --card-bg: var(--ln-card);
-  --card-hover: #F6F8FC;
+  --card-hover: #F8FAFC;
   --text-primary: var(--ln-text-secondary);
-  --text-muted: var(--ln-primary);
+  --text-muted: var(--text-muted);
 }
 [data-theme='light'] body {
   background: var(--ln-bg);
@@ -2108,6 +2126,387 @@ body {
 
 .labels-dropdown-item.active {
   background: rgba(255, 255, 255, 0.08);
+}
+
+/* CardModal rearranged grid layout styling */
+.modal-middle-section {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 24px;
+  grid-template-areas: 
+    "description labels"
+    "associate type";
+  margin-bottom: 8px;
+}
+
+.modal-area-description {
+  grid-area: description;
+}
+
+.modal-area-associate {
+  grid-area: associate;
+}
+
+.modal-area-labels {
+  grid-area: labels;
+}
+
+.modal-area-type {
+  grid-area: type;
+}
+
+.modal-layout-divider {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 20px 0;
+}
+
+.modal-bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .modal-middle-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .modal-area-description { order: 1; }
+  .modal-area-labels { order: 2; }
+  .modal-area-type { order: 3; }
+  .modal-area-associate { order: 4; }
+  
+  .modal-bottom-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* Type of Work card styling and outlines */
+.kanban-card.type-task {
+  border-color: rgba(59, 130, 246, 0.45) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25), 0 0 12px rgba(59, 130, 246, 0.22) !important;
+}
+.kanban-card.type-task:hover {
+  border-color: rgba(59, 130, 246, 0.75) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 18px rgba(59, 130, 246, 0.35) !important;
+}
+
+.kanban-card.type-subtask {
+  border-color: rgba(139, 92, 246, 0.45) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25), 0 0 12px rgba(139, 92, 246, 0.22) !important;
+}
+.kanban-card.type-subtask:hover {
+  border-color: rgba(139, 92, 246, 0.75) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 18px rgba(139, 92, 246, 0.35) !important;
+}
+
+.kanban-card.type-bug {
+  border-color: rgba(239, 68, 68, 0.48) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25), 0 0 12px rgba(239, 68, 68, 0.25) !important;
+}
+.kanban-card.type-bug:hover {
+  border-color: rgba(239, 68, 68, 0.78) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 18px rgba(239, 68, 68, 0.4) !important;
+}
+
+/* Badge colors for Card Type */
+.card-badge.type-task {
+  color: #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.1) !important;
+  font-weight: 600;
+}
+.card-badge.type-task .type-dot {
+  color: #3b82f6 !important;
+  margin-right: 4px;
+}
+
+.card-badge.type-subtask {
+  color: #8b5cf6 !important;
+  background: rgba(139, 92, 246, 0.1) !important;
+  font-weight: 600;
+}
+.card-badge.type-subtask .type-dot {
+  color: #8b5cf6 !important;
+  margin-right: 4px;
+}
+
+.card-badge.type-bug {
+  color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.12) !important;
+  font-weight: 600;
+}
+.card-badge.type-bug .type-dot {
+  color: #ef4444 !important;
+  margin-right: 4px;
+}
+
+/* Work Type Selector Buttons Base Styles (Dark Theme Default) */
+.work-type-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease-in-out;
+}
+.work-type-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+/* Selected button states */
+.work-type-btn.task.active {
+  background: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+}
+.work-type-dot.task {
+  background-color: #3b82f6;
+}
+.work-type-dot.task.active {
+  background-color: #ffffff;
+}
+
+.work-type-btn.subtask.active {
+  background: #8b5cf6;
+  color: #ffffff;
+  font-weight: 600;
+}
+.work-type-dot.subtask {
+  background-color: #8b5cf6;
+}
+.work-type-dot.subtask.active {
+  background-color: #ffffff;
+}
+
+.work-type-btn.bug.active {
+  background: #ef4444;
+  color: #ffffff;
+  font-weight: 600;
+}
+.work-type-dot.bug {
+  background-color: #ef4444;
+}
+.work-type-dot.bug.active {
+  background-color: #ffffff;
+}
+
+/* Light Theme selected button states */
+[data-theme='light'] .work-type-btn {
+  color: var(--text-secondary);
+}
+[data-theme='light'] .work-type-btn.task.active {
+  background: #2563EB;
+  color: #ffffff;
+}
+[data-theme='light'] .work-type-btn.subtask.active {
+  background: #8B5CF6;
+  color: #ffffff;
+}
+[data-theme='light'] .work-type-btn.bug.active {
+  background: #EF4444;
+  color: #ffffff;
+}
+
+/* Card / Task Modal Light Theme Readability & Spacing Polish */
+[data-theme='light'] .modal-overlay {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+[data-theme='light'] .modal-content {
+  background: #ffffff;
+  color: #374151; /* --text-secondary */
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+  border-radius: 16px;
+}
+
+[data-theme='light'] .modal-title-input {
+  color: #111827; /* --text-primary */
+  font-weight: 700;
+}
+
+[data-theme='light'] .modal-title-input:focus {
+  background: #F8FAFC;
+  border-color: #3B82F6;
+}
+
+[data-theme='light'] .modal-close-btn {
+  color: #475569;
+}
+[data-theme='light'] .modal-close-btn:hover {
+  background: #F1F5F9;
+  color: #111827;
+}
+
+[data-theme='light'] .section-title {
+  color: #1F2937;
+  font-weight: 700;
+}
+[data-theme='light'] .section-title svg {
+  color: #475569;
+}
+
+[data-theme='light'] .modal-textarea {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  color: #1F2937;
+}
+[data-theme='light'] .modal-textarea::placeholder {
+  color: #94A3B8;
+}
+[data-theme='light'] .modal-textarea:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+[data-theme='light'] .modal-mini-input,
+[data-theme='light'] .modal-select {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #1F2937;
+}
+[data-theme='light'] .modal-mini-input::placeholder {
+  color: #94A3B8;
+}
+[data-theme='light'] .modal-mini-input:focus,
+[data-theme='light'] .modal-select:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+[data-theme='light'] .btn-create {
+  background: #2563EB;
+  color: #FFFFFF;
+}
+[data-theme='light'] .btn-create:hover {
+  background: #1D4ED8;
+}
+
+[data-theme='light'] .checklist-item-text {
+  color: #374151;
+}
+[data-theme='light'] .checklist-item-text.completed {
+  color: #94A3B8;
+}
+
+[data-theme='light'] .subtask-text-span {
+  color: #374151;
+}
+[data-theme='light'] .subtask-text-span.done {
+  color: #94A3B8;
+}
+[data-theme='light'] .subtask-item {
+  border-bottom: 1px solid #F1F5F9;
+}
+[data-theme='light'] .subtask-status-select {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  color: #374151;
+}
+[data-theme='light'] .subtask-delete-btn,
+[data-theme='light'] .subtask-add-btn-icon {
+  color: #64748B;
+}
+[data-theme='light'] .subtask-delete-btn:hover {
+  color: #DC2626;
+  background: #FEF2F2;
+}
+
+[data-theme='light'] .modal-layout-divider {
+  border-top-color: #E2E8F0;
+}
+
+[data-theme='light'] .side-btn {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #334155;
+}
+[data-theme='light'] .side-btn:hover {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+  color: #111827;
+}
+[data-theme='light'] .side-btn.danger {
+  color: #DC2626;
+  border-color: #FCA5A5;
+}
+[data-theme='light'] .side-btn.danger:hover {
+  background: #FEF2F2;
+  border-color: #EF4444;
+  color: #DC2626;
+}
+
+/* Spacing and margins alignments */
+.modal-middle-section {
+  margin-top: 16px;
+  row-gap: 20px;
+}
+.modal-section {
+  margin-bottom: 0px;
+}
+
+/* Card badges and date meta readability overrides in Light Theme */
+[data-theme='light'] .card-meta {
+  color: #475569 !important;
+}
+[data-theme='light'] .card-badge {
+  background: #F1F5F9 !important;
+  color: #334155 !important;
+  border: 1px solid #CBD5E1 !important;
+}
+[data-theme='light'] .card-badge svg {
+  color: #475569 !important;
+}
+[data-theme='light'] .card-badge.due {
+  background: #FEE2E2 !important;
+  color: #DC2626 !important;
+  border-color: #FCA5A5 !important;
+}
+[data-theme='light'] .card-badge.due svg {
+  color: #DC2626 !important;
+}
+
+/* Light Theme badge text contrast enhancements for Card Types */
+[data-theme='light'] .card-badge.type-task {
+  color: #1D4ED8 !important;
+  background: rgba(37, 99, 235, 0.08) !important;
+  border-color: rgba(37, 99, 235, 0.2) !important;
+}
+[data-theme='light'] .card-badge.type-task .type-dot {
+  color: #2563EB !important;
+}
+
+[data-theme='light'] .card-badge.type-subtask {
+  color: #6D28D9 !important;
+  background: rgba(124, 58, 237, 0.08) !important;
+  border-color: rgba(124, 58, 237, 0.2) !important;
+}
+[data-theme='light'] .card-badge.type-subtask .type-dot {
+  color: #8B5CF6 !important;
+}
+
+[data-theme='light'] .card-badge.type-bug {
+  color: #B91C1C !important;
+  background: rgba(220, 38, 38, 0.08) !important;
+  border-color: rgba(220, 38, 38, 0.2) !important;
+}
+[data-theme='light'] .card-badge.type-bug .type-dot {
+  color: #EF4444 !important;
 }
 
 

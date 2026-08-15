@@ -40,7 +40,7 @@ export default function PlannerView({ lists, onCardClick }) {
               upcomingCards.map((card) => (
                 <div
                   key={card.id}
-                  className="kanban-card planner-card"
+                  className={`kanban-card planner-card ${card.typeOfWork ? 'type-' + card.typeOfWork.toLowerCase() : ''}`}
                   onClick={() => onCardClick(card, card.listId)}
                 >
                   <div>
@@ -75,7 +75,7 @@ export default function PlannerView({ lists, onCardClick }) {
               unscheduledCards.map((card) => (
                 <div
                   key={card.id}
-                  className="kanban-card planner-card"
+                  className={`kanban-card planner-card ${card.typeOfWork ? 'type-' + card.typeOfWork.toLowerCase() : ''}`}
                   onClick={() => onCardClick(card, card.listId)}
                 >
                   <div>

@@ -19,6 +19,17 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
+const getContrastColor = (hexColor) => {
+  if (!hexColor) return '#ffffff';
+  const hex = hexColor.replace('#', '');
+  if (hex.length !== 6) return '#ffffff';
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+  return yiq >= 150 ? '#111827' : '#ffffff';
+};
+
 const DEFAULT_LABELS = [];
 
 const PRESET_COLORS = [
@@ -625,368 +636,11 @@ export default function CardModal({
           </button>
         </div>
 
-        <div className="modal-grid">
-          <div className="modal-left">
-
-            {/* =====================================================
-                LABELS + SUBTASKS SIDE BY SIDE
-            ====================================================== */}
-            <div className="modal-row-side-by-side">
-              {/* LEFT: LABELS */}
-              <div className="modal-section-half">
-                <div className="section-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Tag size={16} />
-                    <span>Labels</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <button
-                      type="button"
-                      onClick={() => setShowManageLabels(true)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#b6c2cf',
-                        cursor: 'pointer',
-                        padding: '4px',
-                        borderRadius: '4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                      title="Manage & Select Labels"
-                      className="label-action-btn"
-                    >
-                      <Pencil size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleClearLabels}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#b6c2cf',
-                        cursor: 'pointer',
-                        padding: '4px',
-                        borderRadius: '4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                      title="Clear Labels"
-                      className="label-action-btn"
-                    >
-                      <Trash size={14} />
-                    </button>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    marginTop: '10px'
-                  }}
-                >
-                  {/* SELECTED LABEL CHIPS */}
-                  {labels.length > 0 && (
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '6px',
-                        marginTop: '8px',
-                        marginBottom: '8px'
-                      }}
-                    >
-                      {labels.map((label) => (
-                        <span
-                          key={label.id}
-                          className="label-pill"
-                          style={{
-                            backgroundColor: label.color,
-                            opacity: 1,
-                            padding: '4px 9px'
-                          }}
-                        >
-                          {label.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* TYPE OF WORK */}
-                <div style={{ marginTop: '20px' }}>
-                  <div className="section-title">
-                    <Briefcase size={16} />
-                    <span>Type of Work</span>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '6px',
-                      marginTop: '8px',
-                      background: '#0f172a',
-                      padding: '4px',
-                      borderRadius: '8px',
-                      border: '1px solid #334155'
-                    }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => handleUpdateTypeOfWork('task')}
-                      style={{
-                        flex: 1,
-                        padding: '8px 12px',
-                        borderRadius: '6px',
-                        border: 'none',
-                        background: typeOfWork === 'task' ? '#3b82f6' : 'transparent',
-                        color: typeOfWork === 'task' ? '#ffffff' : '#94a3b8',
-                        fontSize: '13px',
-                        fontWeight: typeOfWork === 'task' ? '600' : '500',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        transition: 'all 0.2s ease-in-out'
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: '6px',
-                          height: '6px',
-                          borderRadius: '50%',
-                          backgroundColor: typeOfWork === 'task' ? '#ffffff' : '#3b82f6'
-                        }}
-                      />
-                      Task
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleUpdateTypeOfWork('subtask')}
-                      style={{
-                        flex: 1,
-                        padding: '8px 12px',
-                        borderRadius: '6px',
-                        border: 'none',
-                        background: typeOfWork === 'subtask' ? '#8b5cf6' : 'transparent',
-                        color: typeOfWork === 'subtask' ? '#ffffff' : '#94a3b8',
-                        fontSize: '13px',
-                        fontWeight: typeOfWork === 'subtask' ? '600' : '500',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        transition: 'all 0.2s ease-in-out'
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: '6px',
-                          height: '6px',
-                          borderRadius: '50%',
-                          backgroundColor: typeOfWork === 'subtask' ? '#ffffff' : '#8b5cf6'
-                        }}
-                      />
-                      Subtask
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleUpdateTypeOfWork('bug')}
-                      style={{
-                        flex: 1,
-                        padding: '8px 12px',
-                        borderRadius: '6px',
-                        border: 'none',
-                        background: typeOfWork === 'bug' ? '#ef4444' : 'transparent',
-                        color: typeOfWork === 'bug' ? '#ffffff' : '#94a3b8',
-                        fontSize: '13px',
-                        fontWeight: typeOfWork === 'bug' ? '600' : '500',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        transition: 'all 0.2s ease-in-out'
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: '6px',
-                          height: '6px',
-                          borderRadius: '50%',
-                          backgroundColor: typeOfWork === 'bug' ? '#ffffff' : '#ef4444'
-                        }}
-                      />
-                      Bug
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-            {/* RIGHT: SUBTASKS */}
-            <div className="modal-section-half">
-              <div className="subtasks-header">
-                <div className="subtasks-header-title">
-                  <CheckSquare size={16} />
-                  <span>Subtasks</span>
-                </div>
-                <button
-                  type="button"
-                  className="subtask-add-btn-icon"
-                  onClick={() => setShowAddSubtask(!showAddSubtask)}
-                  title="Add Subtask"
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
-
-              {/* Subtasks Progress Bar & Percentage */}
-              {subtasks.length > 0 && (
-                <>
-                  <div className="subtask-progress-bar-container">
-                    {subtasks.filter(s => s.status === 'done').length > 0 && (
-                      <div
-                        className="subtask-progress-bar-done"
-                        style={{
-                          width: `${(subtasks.filter(s => s.status === 'done').length / subtasks.length) * 100}%`
-                        }}
-                      />
-                    )}
-                    {subtasks.filter(s => s.status === 'in_progress').length > 0 && (
-                      <div
-                        className="subtask-progress-bar-in-progress"
-                        style={{
-                          width: `${(subtasks.filter(s => s.status === 'in_progress').length / subtasks.length) * 100}%`
-                        }}
-                      />
-                    )}
-                    {subtasks.filter(s => s.status === 'todo').length > 0 && (
-                      <div
-                        className="subtask-progress-bar-todo"
-                        style={{
-                          width: `${(subtasks.filter(s => s.status === 'todo').length / subtasks.length) * 100}%`
-                        }}
-                      />
-                    )}
-                  </div>
-                  <div className="subtask-percentage-text">
-                    {Math.round((subtasks.filter(s => s.status === 'done').length / subtasks.length) * 100)}% Done
-                  </div>
-                </>
-              )}
-
-              {/* Add Subtask Form */}
-              {showAddSubtask && (
-                <form
-                  onSubmit={handleAddSubtask}
-                  style={{
-                    display: 'flex',
-                    gap: '8px',
-                    marginBottom: '10px'
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="modal-mini-input"
-                    placeholder="Subtask name"
-                    value={newSubtaskTitle}
-                    onChange={(e) => setNewSubtaskTitle(e.target.value)}
-                    style={{ flex: 1 }}
-                    autoFocus
-                  />
-                  <button
-                    type="submit"
-                    className="btn-create"
-                    style={{ padding: '6px 12px', fontSize: '12px' }}
-                  >
-                    Add
-                  </button>
-                </form>
-              )}
-
-              {/* List of Subtasks */}
-              <div className="subtasks-list">
-                {subtasks.map((sub) => (
-                  <div key={sub.id} className={`subtask-item ${sub.status}`}>
-                    {/* Checkbox Icon */}
-                    {sub.status === 'done' ? (
-                      <CheckSquare
-                        size={16}
-                        style={{ color: '#10b981', cursor: 'pointer', flexShrink: 0 }}
-                        onClick={() => handleToggleSubtaskCheckbox(sub)}
-                      />
-                    ) : sub.status === 'in_progress' ? (
-                      <Square
-                        size={16}
-                        style={{ color: '#0284c7', cursor: 'pointer', flexShrink: 0 }}
-                        onClick={() => handleToggleSubtaskCheckbox(sub)}
-                      />
-                    ) : (
-                      <Square
-                        size={16}
-                        style={{ color: '#94a3b8', cursor: 'pointer', flexShrink: 0 }}
-                        onClick={() => handleToggleSubtaskCheckbox(sub)}
-                      />
-                    )}
-
-                    {/* Editable Text */}
-                    {editingSubtaskId === sub.id ? (
-                      <input
-                        type="text"
-                        className="subtask-text-input"
-                        value={editingSubtaskTitle}
-                        onChange={(e) => setEditingSubtaskTitle(e.target.value)}
-                        onBlur={() => handleSaveSubtaskTitle(sub.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleSaveSubtaskTitle(sub.id);
-                          } else if (e.key === 'Escape') {
-                            setEditingSubtaskId(null);
-                          }
-                        }}
-                        autoFocus
-                      />
-                    ) : (
-                      <span
-                        className={`subtask-text-span ${sub.status === 'done' ? 'done' : ''}`}
-                        onClick={() => handleStartEditSubtask(sub)}
-                      >
-                        {sub.title}
-                      </span>
-                    )}
-
-                    {/* Status Dropdown */}
-                    <select
-                      className="subtask-status-select"
-                      value={sub.status}
-                      onChange={(e) => handleUpdateSubtaskStatus(sub.id, e.target.value)}
-                    >
-                      <option value="todo">To Do</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="done">Done</option>
-                    </select>
-
-                    {/* Delete Button */}
-                    <button
-                      type="button"
-                      className="subtask-delete-btn"
-                      onClick={() => handleDeleteSubtask(sub.id)}
-                      title="Delete Subtask"
-                    >
-                      <Trash size={14} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
+        <div className="modal-middle-section">
+          {/* LEFT: DESCRIPTION + ASSOCIATE TASK */}
+          <div className="modal-area-description">
             {/* DESCRIPTION */}
-            <div className="modal-section">
+            <div className="modal-section" style={{ marginBottom: 0 }}>
               <div className="section-title">
                 <AlignLeft size={16} />
                 <span>Description</span>
@@ -1001,9 +655,11 @@ export default function CardModal({
                 }
               />
             </div>
+          </div>
 
+          <div className="modal-area-associate">
             {/* ASSOCIATE TASK - REPLACES CHECKLIST */}
-            <div className="modal-section">
+            <div className="modal-section" style={{ marginBottom: 0 }}>
               <div
                 className="section-title"
                 style={{
@@ -1099,91 +755,390 @@ export default function CardModal({
                 </button>
               </form>
             </div>
-
-            {/* Comments removed to save space */}
           </div>
 
-          {/* RIGHT SIDEBAR */}
-          <div className="modal-sidebar-btns">
+          {/* RIGHT: LABELS + TYPE OF WORK */}
+          <div className="modal-area-labels">
+            {/* LABELS */}
+            <div className="modal-section" style={{ marginBottom: 0 }}>
+              <div className="section-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Tag size={16} />
+                  <span>Labels</span>
+                </div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowManageLabels(true)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--text-secondary)',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    title="Manage & Select Labels"
+                    className="label-action-btn"
+                  >
+                    <Pencil size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleClearLabels}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--text-secondary)',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    title="Clear Labels"
+                    className="label-action-btn"
+                  >
+                    <Trash size={14} />
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '10px' }}>
+                {/* SELECTED LABEL CHIPS */}
+                {labels.length > 0 && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '6px',
+                      marginTop: '8px',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    {labels.map((label) => (
+                      <span
+                        key={label.id}
+                        className="label-pill"
+                        style={{
+                          backgroundColor: label.color,
+                          color: getContrastColor(label.color),
+                          opacity: 1,
+                          padding: '4px 9px'
+                        }}
+                      >
+                        {label.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="modal-area-type">
+            {/* TYPE OF WORK */}
+            <div className="modal-section" style={{ marginBottom: 0 }}>
+              <div className="section-title">
+                <Briefcase size={16} />
+                <span>Type of Work</span>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '6px',
+                  marginTop: '8px',
+                  background: 'var(--bg-muted)',
+                  padding: '4px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)'
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleUpdateTypeOfWork('task')}
+                  className={`work-type-btn task ${typeOfWork === 'task' ? 'active' : ''}`}
+                >
+                  <span className={`work-type-dot task ${typeOfWork === 'task' ? 'active' : ''}`} />
+                  Task
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleUpdateTypeOfWork('subtask')}
+                  className={`work-type-btn subtask ${typeOfWork === 'subtask' ? 'active' : ''}`}
+                >
+                  <span className={`work-type-dot subtask ${typeOfWork === 'subtask' ? 'active' : ''}`} />
+                  Subtask
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleUpdateTypeOfWork('bug')}
+                  className={`work-type-btn bug ${typeOfWork === 'bug' ? 'active' : ''}`}
+                >
+                  <span className={`work-type-dot bug ${typeOfWork === 'bug' ? 'active' : ''}`} />
+                  Bug
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* DIVIDER */}
+        <hr className="modal-layout-divider" />
+
+        {/* BOTTOM SECTION: SUBTASKS + ACTIONS */}
+        <div className="modal-bottom-section">
+          {/* LEFT: SUBTASKS */}
+          <div className="modal-area-subtasks">
+            {/* SUBTASKS */}
+            <div className="modal-section" style={{ marginBottom: 0 }}>
+              <div className="subtasks-header">
+                <div className="subtasks-header-title">
+                  <CheckSquare size={16} />
+                  <span>Subtasks</span>
+                </div>
+                <button
+                  type="button"
+                  className="subtask-add-btn-icon"
+                  onClick={() => setShowAddSubtask(!showAddSubtask)}
+                  title="Add Subtask"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+
+              {/* Subtasks Progress Bar & Percentage */}
+              {subtasks.length > 0 && (
+                <>
+                  <div className="subtask-progress-bar-container">
+                    {subtasks.filter(s => s.status === 'done').length > 0 && (
+                      <div
+                        className="subtask-progress-bar-done"
+                        style={{
+                          width: `${(subtasks.filter(s => s.status === 'done').length / subtasks.length) * 100}%`
+                        }}
+                      />
+                    )}
+                    {subtasks.filter(s => s.status === 'in_progress').length > 0 && (
+                      <div
+                        className="subtask-progress-bar-in-progress"
+                        style={{
+                          width: `${(subtasks.filter(s => s.status === 'in_progress').length / subtasks.length) * 100}%`
+                        }}
+                      />
+                    )}
+                    {subtasks.filter(s => s.status === 'todo').length > 0 && (
+                      <div
+                        className="subtask-progress-bar-todo"
+                        style={{
+                          width: `${(subtasks.filter(s => s.status === 'todo').length / subtasks.length) * 100}%`
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div className="subtask-percentage-text">
+                    {Math.round((subtasks.filter(s => s.status === 'done').length / subtasks.length) * 100)}% Done
+                  </div>
+                </>
+              )}
+
+              {/* Add Subtask Form */}
+              {showAddSubtask && (
+                <form
+                  onSubmit={handleAddSubtask}
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    marginBottom: '10px'
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="modal-mini-input"
+                    placeholder="Subtask name"
+                    value={newSubtaskTitle}
+                    onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                    style={{ flex: 1 }}
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    className="btn-create"
+                    style={{ padding: '6px 12px', fontSize: '12px' }}
+                  >
+                    Add
+                  </button>
+                </form>
+              )}
+
+              {/* List of Subtasks */}
+              <div className="subtasks-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                {subtasks.map((sub) => (
+                  <div key={sub.id} className={`subtask-item ${sub.status}`}>
+                    {/* Checkbox Icon */}
+                    {sub.status === 'done' ? (
+                      <CheckSquare
+                        size={16}
+                        style={{ color: '#10b981', cursor: 'pointer', flexShrink: 0 }}
+                        onClick={() => handleToggleSubtaskCheckbox(sub)}
+                      />
+                    ) : sub.status === 'in_progress' ? (
+                      <Square
+                        size={16}
+                        style={{ color: '#0284c7', cursor: 'pointer', flexShrink: 0 }}
+                        onClick={() => handleToggleSubtaskCheckbox(sub)}
+                      />
+                    ) : (
+                      <Square
+                        size={16}
+                        style={{ color: '#94a3b8', cursor: 'pointer', flexShrink: 0 }}
+                        onClick={() => handleToggleSubtaskCheckbox(sub)}
+                      />
+                    )}
+
+                    {/* Editable Text */}
+                    {editingSubtaskId === sub.id ? (
+                      <input
+                        type="text"
+                        className="subtask-text-input"
+                        value={editingSubtaskTitle}
+                        onChange={(e) => setEditingSubtaskTitle(e.target.value)}
+                        onBlur={() => handleSaveSubtaskTitle(sub.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleSaveSubtaskTitle(sub.id);
+                          } else if (e.key === 'Escape') {
+                            setEditingSubtaskId(null);
+                          }
+                        }}
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        className={`subtask-text-span ${sub.status === 'done' ? 'done' : ''}`}
+                        onClick={() => handleStartEditSubtask(sub)}
+                      >
+                        {sub.title}
+                      </span>
+                    )}
+
+                    {/* Status Dropdown */}
+                    <select
+                      className="subtask-status-select"
+                      value={sub.status}
+                      onChange={(e) => handleUpdateSubtaskStatus(sub.id, e.target.value)}
+                    >
+                      <option value="todo">To Do</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="done">Done</option>
+                    </select>
+
+                    {/* Delete Button */}
+                    <button
+                      type="button"
+                      className="subtask-delete-btn"
+                      onClick={() => handleDeleteSubtask(sub.id)}
+                      title="Delete Subtask"
+                    >
+                      <Trash size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: ACTIONS */}
+          <div className="modal-area-actions">
             <span
               style={{
                 fontSize: '12px',
                 fontWeight: 'bold',
-                color: '#94a3b8'
+                color: 'var(--text-muted)',
+                display: 'block',
+                marginBottom: '8px'
               }}
             >
               ACTIONS
             </span>
 
-            {/* MOVE */}
-            <div className="side-btn">
-              <Move size={14} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {/* MOVE */}
+              <div className="side-btn">
+                <Move size={14} />
 
-              <select
-                value={targetListId}
-                onChange={(e) =>
-                  setTargetListId(
-                    e.target.value
-                  )
-                }
-                className="modal-select"
-              >
-                {lists.map((l) => (
-                  <option
-                    key={l.id}
-                    value={l.id}
-                  >
-                    List: {l.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* DUE DATE */}
-            <div
-              className="side-btn"
-              style={{
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                gap: '4px'
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <Calendar size={14} />
-                <span>Due Date</span>
+                <select
+                  value={targetListId}
+                  onChange={(e) =>
+                    setTargetListId(
+                      e.target.value
+                    )
+                  }
+                  className="modal-select"
+                >
+                  {lists.map((l) => (
+                    <option
+                      key={l.id}
+                      value={l.id}
+                    >
+                      List: {l.title}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) =>
-                  setDueDate(e.target.value)
-                }
-                className="modal-mini-input"
+              {/* DUE DATE */}
+              <div
+                className="side-btn"
                 style={{
-                  padding: '4px 6px',
-                  fontSize: '12px'
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  gap: '4px'
                 }}
-              />
-            </div>
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <Calendar size={14} />
+                  <span>Due Date</span>
+                </div>
 
-            {/* DELETE */}
-            <button
-              className="side-btn danger"
-              onClick={() => {
-                onDeleteCard(card.id);
-                onClose();
-              }}
-            >
-              <Trash2 size={14} />
-              <span>Delete Card</span>
-            </button>
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) =>
+                    setDueDate(e.target.value)
+                  }
+                  className="modal-mini-input"
+                  style={{
+                    padding: '4px 6px',
+                    fontSize: '12px'
+                  }}
+                />
+              </div>
+
+              {/* DELETE */}
+              <button
+                className="side-btn danger"
+                onClick={() => {
+                  onDeleteCard(card.id);
+                  onClose();
+                }}
+              >
+                <Trash2 size={14} />
+                <span>Delete Card</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1529,7 +1484,7 @@ export default function CardModal({
                       <span
                         style={{
                           flex: 1,
-                          color: '#e2e8f0',
+                          color: 'var(--text-primary)',
                           cursor: 'pointer'
                         }}
                         onClick={() => toggleLabel(label)}
