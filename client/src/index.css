@@ -2531,4 +2531,11 @@ body {
   color: #EF4444 !important;
 }
 
+[data-theme='light'] .subtasks-header-title {
+  color: #1F2937 !important;
+}
+[data-theme='light'] .subtasks-header-title svg {
+  color: #475569 !important;
+}
+
 
