@@ -144,6 +144,8 @@ export default function App() {
             cards: l.cards.map((c) => (c.id === cardId ? updatedCard : c))
           }))
         }));
+        // Update activeCard to stay in sync with the backend response
+        setActiveCard((prev) => (prev && prev.id === cardId ? updatedCard : prev));
       }
     } catch (err) {
       console.error('Error updating card:', err);
@@ -179,6 +181,14 @@ export default function App() {
       if (res.ok) {
         const data = await res.json();
         setBoard(data.board);
+        if (activeCard && activeCard.id === cardId) {
+          setActiveCardListId(targetListId);
+          const targetList = data.board.lists.find((l) => l.id === targetListId);
+          const freshCard = targetList?.cards?.find((c) => c.id === cardId);
+          if (freshCard) {
+            setActiveCard(freshCard);
+          }
+        }
       }
     } catch (err) {
       console.error('Error moving card:', err);

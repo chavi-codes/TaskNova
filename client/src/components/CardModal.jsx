@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   X,
   CheckSquare,
@@ -98,6 +98,39 @@ export default function CardModal({
     ? Math.round((completedCount / checklist.length) * 100)
     : 0;
 
+  const prevCardRef = useRef(card);
+
+  useEffect(() => {
+    const prevCard = prevCardRef.current;
+    if (card.id !== prevCard.id) {
+      // New card opened: reset all states to fresh card prop values
+      setTitle(card.title || '');
+      setDescription(card.description || '');
+      setDueDate(card.dueDate || '');
+      setTypeOfWork(card.typeOfWork || 'task');
+      setChecklist(card.checklist || []);
+      setLabels(card.labels || []);
+      setComments(card.comments || []);
+      setSubtasks(card.subtasks || []);
+      setTargetListId(listId);
+    } else {
+      // Same card updated: sync states if they have not been edited locally (keeps user inputs safe)
+      if (card.title !== prevCard.title && title === prevCard.title) {
+        setTitle(card.title || '');
+      }
+      if (card.description !== prevCard.description && description === prevCard.description) {
+        setDescription(card.description || '');
+      }
+      if (card.dueDate !== prevCard.dueDate) setDueDate(card.dueDate || '');
+      if (card.typeOfWork !== prevCard.typeOfWork) setTypeOfWork(card.typeOfWork || 'task');
+      if (card.checklist !== prevCard.checklist) setChecklist(card.checklist || []);
+      if (card.labels !== prevCard.labels) setLabels(card.labels || []);
+      if (card.comments !== prevCard.comments) setComments(card.comments || []);
+      if (card.subtasks !== prevCard.subtasks) setSubtasks(card.subtasks || []);
+    }
+    prevCardRef.current = card;
+  }, [card, listId]);
+
   // ------------------------------------------------------------
   // Load global labels
   // ------------------------------------------------------------
@@ -134,8 +167,8 @@ export default function CardModal({
   // ------------------------------------------------------------
   // Save card
   // ------------------------------------------------------------
-  const handleSaveAll = () => {
-    onUpdateCard(card.id, {
+  const handleSaveAll = async () => {
+    await onUpdateCard(card.id, {
       title,
       description,
       dueDate,
@@ -147,7 +180,7 @@ export default function CardModal({
     });
 
     if (targetListId !== listId) {
-      onMoveCard(card.id, listId, targetListId);
+      await onMoveCard(card.id, listId, targetListId);
     }
 
     onClose();
@@ -225,13 +258,13 @@ export default function CardModal({
         }
       }
     }
-  };  const handleConfirmMove = () => {
+  };  const handleConfirmMove = async () => {
     const doneList = lists.find(
       (l) => l.title?.toLowerCase() === 'done'
     );
 
     if (doneList) {
-      onUpdateCard(card.id, {
+      await onUpdateCard(card.id, {
         title,
         description,
         dueDate,
@@ -242,7 +275,7 @@ export default function CardModal({
         typeOfWork
       });
 
-      onMoveCard(card.id, listId, doneList.id);
+      await onMoveCard(card.id, listId, doneList.id);
       onClose();
     }
 
