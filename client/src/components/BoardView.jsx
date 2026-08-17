@@ -79,7 +79,8 @@ export default function BoardView({ lists, searchQuery, onCardClick, onAddCard, 
           return (
             c.title.toLowerCase().includes(q) ||
             (c.description && c.description.toLowerCase().includes(q)) ||
-            (c.labels && c.labels.some((l) => l.name.toLowerCase().includes(q)))
+            (c.labels && c.labels.some((l) => l.name.toLowerCase().includes(q))) ||
+            (c.typeOfWork && c.typeOfWork.toLowerCase().startsWith(q))
           );
         });
 
@@ -114,79 +115,87 @@ export default function BoardView({ lists, searchQuery, onCardClick, onAddCard, 
 
             {/* Cards */}
             <div className="cards-container">
-              {filteredCards.map((card) => {
-                const totalCheck = card.checklist?.length || 0;
-                const doneCheck = card.checklist?.filter((c) => c.completed).length || 0;
-
-                return (
-                  <div
-                    key={card.id}
-                    className={`kanban-card ${card.typeOfWork ? 'type-' + card.typeOfWork.toLowerCase() : ''}`}
-                    draggable
-                    onDragStart={() => handleDragStart(card.id, list.id)}
-                    onClick={() => onCardClick(card, list.id)}
-                  >
-                    {/* Optional Video Demo / Media Cover */}
-                    {card.cover === 'video_demo' && (
-                      <div className="card-cover-media">
-                        <div className="play-btn-circle">
-                          <Play size={20} fill="#0284c7" />
-                        </div>
-                      </div>
-                    )}
-
-                    {card.labels && card.labels.length > 0 && (
-                      <div className="card-labels">
-                        {card.labels.map((lbl) => (
-                          <span
-                            key={lbl.id}
-                            className="label-pill"
-                            style={{ backgroundColor: lbl.color, color: getContrastColor(lbl.color) }}
-                          >
-                            {lbl.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="card-title">{card.title}</div>
-
-                    {card.description && (
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                        {card.description.slice(0, 55)}...
-                      </div>
-                    )}
-
-                    {/* Meta Badges */}
-                    {(card.dueDate || totalCheck > 0 || card.typeOfWork) && (
-                      <div className="card-meta">
-                        {card.typeOfWork && (
-                          <div className={`card-badge type-${card.typeOfWork.toLowerCase()}`}>
-                            <span className="type-dot">●</span>
-                            <span style={{ textTransform: 'capitalize' }}>{card.typeOfWork}</span>
-                          </div>
-                        )}
-
-                        {card.dueDate && (
-                          <div className={`card-badge ${new Date(card.dueDate) < new Date() ? 'due' : ''}`}>
-                            <Calendar size={12} />
-                            <span>{card.dueDate}</span>
-                          </div>
-                        )}
-
-                        {totalCheck > 0 && (
-                          <div className="card-badge">
-                            <CheckSquare size={12} />
-                            <span>
-                              {doneCheck}/{totalCheck}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
+              {filteredCards.length === 0 ? (
+                searchQuery ? (
+                  <div className="empty-search-message" style={{ textAlign: 'center', padding: '16px 8px', fontSize: '12px', color: '#94a3b8', width: '100%', fontStyle: 'italic' }}>
+                    No matching tasks found
                   </div>
-                );
-              })}
+                ) : null
+              ) : (
+                filteredCards.map((card) => {
+                  const totalCheck = card.checklist?.length || 0;
+                  const doneCheck = card.checklist?.filter((c) => c.completed).length || 0;
+
+                  return (
+                    <div
+                      key={card.id}
+                      className={`kanban-card ${card.typeOfWork ? 'type-' + card.typeOfWork.toLowerCase() : ''}`}
+                      draggable
+                      onDragStart={() => handleDragStart(card.id, list.id)}
+                      onClick={() => onCardClick(card, list.id)}
+                    >
+                      {/* Optional Video Demo / Media Cover */}
+                      {card.cover === 'video_demo' && (
+                        <div className="card-cover-media">
+                          <div className="play-btn-circle">
+                            <Play size={20} fill="#0284c7" />
+                          </div>
+                        </div>
+                      )}
+
+                      {card.labels && card.labels.length > 0 && (
+                        <div className="card-labels">
+                          {card.labels.map((lbl) => (
+                            <span
+                              key={lbl.id}
+                              className="label-pill"
+                              style={{ backgroundColor: lbl.color, color: getContrastColor(lbl.color) }}
+                            >
+                              {lbl.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="card-title">{card.title}</div>
+
+                      {card.description && (
+                        <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                          {card.description.slice(0, 55)}...
+                        </div>
+                      )}
+
+                      {/* Meta Badges */}
+                      {(card.dueDate || totalCheck > 0 || card.typeOfWork) && (
+                        <div className="card-meta">
+                          {card.typeOfWork && (
+                            <div className={`card-badge type-${card.typeOfWork.toLowerCase()}`}>
+                              <span className="type-dot">●</span>
+                              <span style={{ textTransform: 'capitalize' }}>{card.typeOfWork}</span>
+                            </div>
+                          )}
+
+                          {card.dueDate && (
+                            <div className={`card-badge ${new Date(card.dueDate) < new Date() ? 'due' : ''}`}>
+                              <Calendar size={12} />
+                              <span>{card.dueDate}</span>
+                            </div>
+                          )}
+
+                          {totalCheck > 0 && (
+                            <div className="card-badge">
+                              <CheckSquare size={12} />
+                              <span>
+                                {doneCheck}/{totalCheck}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
 
             {/* Add Card Form inside List */}

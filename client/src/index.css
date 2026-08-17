@@ -2307,19 +2307,41 @@ body {
 
 /* Light Theme selected button states */
 [data-theme='light'] .work-type-btn {
-  color: var(--text-secondary);
+  color: #1F2937 !important;
+  font-weight: 600 !important;
 }
 [data-theme='light'] .work-type-btn.task.active {
-  background: #2563EB;
-  color: #ffffff;
+  background: #2563EB !important;
+  color: #ffffff !important;
 }
 [data-theme='light'] .work-type-btn.subtask.active {
-  background: #8B5CF6;
-  color: #ffffff;
+  background: #8B5CF6 !important;
+  color: #ffffff !important;
 }
 [data-theme='light'] .work-type-btn.bug.active {
-  background: #EF4444;
-  color: #ffffff;
+  background: #EF4444 !important;
+  color: #ffffff !important;
+}
+
+[data-theme='light'] .work-type-dot.task {
+  background-color: #2563EB !important;
+}
+[data-theme='light'] .work-type-dot.task.active {
+  background-color: #ffffff !important;
+}
+
+[data-theme='light'] .work-type-dot.subtask {
+  background-color: #8B5CF6 !important;
+}
+[data-theme='light'] .work-type-dot.subtask.active {
+  background-color: #ffffff !important;
+}
+
+[data-theme='light'] .work-type-dot.bug {
+  background-color: #EF4444 !important;
+}
+[data-theme='light'] .work-type-dot.bug.active {
+  background-color: #ffffff !important;
 }
 
 /* Card / Task Modal Light Theme Readability & Spacing Polish */

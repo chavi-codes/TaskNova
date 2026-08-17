@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { Inbox, Plus, SlidersHorizontal, MoreHorizontal, Mail } from 'lucide-react';
 
+const getContrastColor = (hexColor) => {
+  if (!hexColor) return '#ffffff';
+  const hex = hexColor.replace('#', '');
+  if (hex.length !== 6) return '#ffffff';
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+  return yiq >= 150 ? '#111827' : '#ffffff';
+};
+
 export default function Sidebar({ inboxList, isOpen, onCardClick, onAddInboxCard }) {
   const [newCardTitle, setNewCardTitle] = useState('');
   const [isAdding, setIsAdding] = useState(false);
@@ -81,7 +92,7 @@ export default function Sidebar({ inboxList, isOpen, onCardClick, onAddInboxCard
                   <span
                     key={lbl.id}
                     className="label-pill"
-                    style={{ backgroundColor: lbl.color }}
+                    style={{ backgroundColor: lbl.color, color: getContrastColor(lbl.color) }}
                   >
                     {lbl.name}
                   </span>
