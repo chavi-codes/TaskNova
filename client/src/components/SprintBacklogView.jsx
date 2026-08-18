@@ -13,7 +13,8 @@ import {
   MoreVertical,
   CheckSquare,
   Square,
-  Eye
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 const getContrastColor = (hexColor) => {
@@ -42,6 +43,9 @@ export default function SprintBacklogView({
   const [editDesc, setEditDesc] = useState('');
   const [editType, setEditType] = useState('task');
   const [editListId, setEditListId] = useState('');
+  const [activeMenuSprintId, setActiveMenuSprintId] = useState(null);
+  const [deleteConfirmSprint, setDeleteConfirmSprint] = useState(null);
+  const [showHiddenSprintsDropdown, setShowHiddenSprintsDropdown] = useState(false);
 
   // Sprint Definitions
   const sprints = board.sprints || [
@@ -144,6 +148,46 @@ export default function SprintBacklogView({
       lists: updatedLists,
       sprints: updatedSprints
     });
+  };
+
+  // Hide Sprint
+  const handleHideSprint = (sprintId) => {
+    const updatedSprints = sprints.map(s => s.id === sprintId ? { ...s, isHidden: true } : s);
+    onUpdateBoard({
+      ...board,
+      sprints: updatedSprints
+    });
+    setActiveMenuSprintId(null);
+  };
+
+  // Show Sprint
+  const handleShowSprint = (sprintId) => {
+    const updatedSprints = sprints.map(s => s.id === sprintId ? { ...s, isHidden: false } : s);
+    onUpdateBoard({
+      ...board,
+      sprints: updatedSprints
+    });
+  };
+
+  // Delete Sprint
+  const handleDeleteSprint = (sprintId) => {
+    const updatedSprints = sprints.filter(s => s.id !== sprintId);
+    const updatedLists = lists.map(list => ({
+      ...list,
+      cards: list.cards.map(card => {
+        if (card.sprintId === sprintId) {
+          return { ...card, sprintId: null };
+        }
+        return card;
+      })
+    }));
+
+    onUpdateBoard({
+      ...board,
+      lists: updatedLists,
+      sprints: updatedSprints
+    });
+    setDeleteConfirmSprint(null);
   };
 
   // Move Card between sprints/backlog
@@ -263,18 +307,84 @@ export default function SprintBacklogView({
           </p>
         </div>
 
-        <button
-          onClick={handleCreateSprint}
-          className="btn-create"
-          style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', fontSize: '13px' }}
-        >
-          <Plus size={16} />
-          Create Sprint
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative' }}>
+          {/* Hidden Sprints Toggle */}
+          <button
+            onClick={() => setShowHiddenSprintsDropdown(!showHiddenSprintsDropdown)}
+            className="side-btn"
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', fontSize: '13px', border: '1px solid var(--ln-border)' }}
+          >
+            <Eye size={16} />
+            Hidden Sprints ({sprints.filter(s => s.isHidden).length})
+          </button>
+
+          {/* Hidden Sprints Dropdown content */}
+          {showHiddenSprintsDropdown && (
+            <div style={{
+              position: 'absolute',
+              top: '42px',
+              right: '125px',
+              background: 'var(--ln-card)',
+              border: '1px solid var(--ln-border)',
+              borderRadius: '8px',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+              zIndex: 100,
+              minWidth: '220px',
+              padding: '8px 0'
+            }}>
+              <div style={{ fontSize: '11px', fontWeight: 'bold', padding: '6px 12px', borderBottom: '1px solid var(--ln-border)', color: 'var(--text-muted)' }}>
+                HIDDEN SPRINTS
+              </div>
+              {sprints.filter(s => s.isHidden).length === 0 ? (
+                <div style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  No hidden sprints
+                </div>
+              ) : (
+                sprints.filter(s => s.isHidden).map(s => (
+                  <div key={s.id} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    fontSize: '13px',
+                    gap: '10px',
+                    borderBottom: '1px solid rgba(255,255,255,0.03)'
+                  }}>
+                    <span style={{ fontWeight: '600' }}>{s.name}</span>
+                    <button
+                      onClick={() => handleShowSprint(s.id)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--ln-primary)',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                      title="Show Sprint"
+                    >
+                      <Eye size={14} />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          <button
+            onClick={handleCreateSprint}
+            className="btn-create"
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', fontSize: '13px' }}
+          >
+            <Plus size={16} />
+            Create Sprint
+          </button>
+        </div>
       </div>
 
       {/* RENDER ACTIVE/OPEN SPRINTS */}
-      {sprints.filter(s => s.status !== 'completed').map((sprint) => {
+      {sprints.filter(s => s.status !== 'completed' && !s.isHidden).map((sprint) => {
         const sprintCards = filteredCards.filter(c => c.sprintId === sprint.id);
         const todoCount = sprintCards.filter(c => getCardStatus(c.id) === 'todo').length;
         const progressCount = sprintCards.filter(c => getCardStatus(c.id) === 'in_progress').length;
@@ -347,6 +457,83 @@ export default function SprintBacklogView({
                 >
                   Complete Sprint
                 </button>
+
+                {/* 3-dot options menu */}
+                <div style={{ position: 'relative' }}>
+                  <button
+                    onClick={() => setActiveMenuSprintId(activeMenuSprintId === sprint.id ? null : sprint.id)}
+                    className="side-btn"
+                    style={{
+                      padding: '4px 8px',
+                      height: '28px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '1px solid var(--ln-border)',
+                      borderRadius: '4px'
+                    }}
+                    title="Sprint options"
+                  >
+                    <MoreVertical size={14} />
+                  </button>
+
+                  {activeMenuSprintId === sprint.id && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '32px',
+                      right: '0',
+                      background: 'var(--ln-card)',
+                      border: '1px solid var(--ln-border)',
+                      borderRadius: '8px',
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+                      zIndex: 100,
+                      minWidth: '150px',
+                      padding: '6px 0'
+                    }}>
+                      <button
+                        onClick={() => handleHideSprint(sprint.id)}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--ln-text)',
+                          padding: '8px 12px',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <EyeOff size={14} />
+                        Hide Sprint
+                      </button>
+                      <button
+                        onClick={() => {
+                          setDeleteConfirmSprint(sprint);
+                          setActiveMenuSprintId(null);
+                        }}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          background: 'none',
+                          border: 'none',
+                          color: '#ef4444',
+                          padding: '8px 12px',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <Trash2 size={14} />
+                        Delete Sprint
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -415,6 +602,65 @@ export default function SprintBacklogView({
           )}
         </div>
       </div>
+
+      {/* Delete confirmation modal */}
+      {deleteConfirmSprint && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.65)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: 'var(--ln-card)',
+            border: '1px solid var(--ln-border)',
+            borderRadius: '12px',
+            padding: '24px',
+            maxWidth: '400px',
+            width: '90%',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)'
+          }}>
+            <h4 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px', color: 'var(--ln-text)' }}>
+              Delete Sprint?
+            </h4>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.4' }}>
+              Are you sure you want to delete this sprint? <br />
+              <strong style={{ color: 'var(--ln-text)' }}>{deleteConfirmSprint.name}</strong>
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                onClick={() => setDeleteConfirmSprint(null)}
+                className="side-btn"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteSprint(deleteConfirmSprint.id)}
+                style={{
+                  background: '#ef4444',
+                  borderColor: '#ef4444',
+                  color: 'white',
+                  padding: '8px 16px',
+                  fontSize: '13px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  border: '1px solid #ef4444',
+                  fontWeight: '600'
+                }}
+              >
+                Delete Sprint
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   </div>
 );
@@ -544,21 +790,7 @@ export default function SprintBacklogView({
               <option value="done">Done</option>
             </select>
 
-            {/* Assignee initials badge */}
-            <span style={{
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              backgroundColor: '#4f46e5',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '10px',
-              fontWeight: 'bold'
-            }} title="Assignee">
-              {getAssignee(card)}
-            </span>
+
 
             {/* Chevron toggle */}
             {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -664,10 +896,7 @@ export default function SprintBacklogView({
                     <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'block' }}>STATUS</span>
                     <span style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'capitalize' }}>{listInfo.title}</span>
                   </div>
-                  <div>
-                    <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'block' }}>ASSIGNEE</span>
-                    <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{getAssignee(card)}</span>
-                  </div>
+
                   <div>
                     <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'block' }}>DUE DATE</span>
                     <span style={{ fontSize: '12px', fontWeight: 'bold', color: card.dueDate ? '#ef4444' : 'inherit' }}>
