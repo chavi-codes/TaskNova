@@ -2538,4 +2538,48 @@ body {
   color: #475569 !important;
 }
 
+/* ==========================================================================
+   Manage Labels & Create Label Popup Theme Styles
+   ========================================================================== */
+.manage-labels-modal {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+.manage-labels-title {
+  color: #ffffff;
+}
+.manage-labels-label {
+  color: #94a3b8;
+}
+.manage-labels-item {
+  border-bottom: 1px solid #334155;
+}
+.label-item-name {
+  color: #f8fafc !important;
+}
+
+/* Light Theme Overrides */
+[data-theme='light'] .manage-labels-modal {
+  background: var(--ln-card) !important;
+  border: 1px solid var(--ln-border) !important;
+  color: var(--ln-text) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+}
+[data-theme='light'] .manage-labels-title {
+  color: var(--ln-text) !important;
+}
+[data-theme='light'] .manage-labels-label {
+  color: var(--text-muted) !important;
+}
+[data-theme='light'] .manage-labels-item {
+  border-bottom: 1px solid var(--ln-border) !important;
+}
+[data-theme='light'] .label-item-name {
+  color: var(--ln-text) !important;
+  font-weight: 600;
+}
+
+
 

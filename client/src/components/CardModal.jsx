@@ -1417,10 +1417,9 @@ export default function CardModal({
           }
         >
           <div
+            className="manage-labels-modal"
             style={{
               width: '360px',
-              background: '#1e293b',
-              border: '1px solid #334155',
               borderRadius: '12px',
               padding: '22px'
             }}
@@ -1429,18 +1428,18 @@ export default function CardModal({
             }
           >
             <h3
+              className="manage-labels-title"
               style={{
-                margin: '0 0 18px',
-                color: '#fff'
+                margin: '0 0 18px'
               }}
             >
               Create Label
             </h3>
 
             <label
+              className="manage-labels-label"
               style={{
                 display: 'block',
-                color: '#94a3b8',
                 fontSize: '12px',
                 marginBottom: '6px'
               }}
@@ -1461,9 +1460,9 @@ export default function CardModal({
             />
 
             <label
+              className="manage-labels-label"
               style={{
                 display: 'block',
-                color: '#94a3b8',
                 fontSize: '12px',
                 margin:
                   '14px 0 6px'
@@ -1511,7 +1510,7 @@ export default function CardModal({
                     overflow: 'hidden'
                   }}
                 />
-                <span style={{ fontSize: '11px', color: '#94a3b8', marginLeft: '6px' }}>Custom</span>
+                <span className="manage-labels-label" style={{ fontSize: '11px', marginLeft: '6px' }}>Custom</span>
               </div>
             </div>
 
@@ -1565,13 +1564,12 @@ export default function CardModal({
           }
         >
           <div
+            className="manage-labels-modal"
             style={{
               width: '430px',
               maxWidth: '92vw',
               maxHeight: '75vh',
               overflowY: 'auto',
-              background: '#1e293b',
-              border: '1px solid #334155',
               borderRadius: '12px',
               padding: '22px'
             }}
@@ -1589,9 +1587,9 @@ export default function CardModal({
               }}
             >
               <h3
+                className="manage-labels-title"
                 style={{
-                  margin: 0,
-                  color: '#fff'
+                  margin: 0
                 }}
               >
                 Manage Labels
@@ -1632,14 +1630,13 @@ export default function CardModal({
               (label) => (
                 <div
                   key={label.id}
+                  className="manage-labels-item"
                   style={{
                     display: 'flex',
                     alignItems:
                       'center',
                     gap: '8px',
-                    padding: '10px 0',
-                    borderBottom:
-                      '1px solid #334155'
+                    padding: '10px 0'
                   }}
                 >
                   {editingLabelId ===
@@ -1735,9 +1732,9 @@ export default function CardModal({
                       />
 
                       <span
+                        className="label-item-name"
                         style={{
                           flex: 1,
-                          color: 'var(--text-primary)',
                           cursor: 'pointer'
                         }}
                         onClick={() => toggleLabel(label)}
