@@ -2624,10 +2624,12 @@ body {
 
 .sprint-backlog-view {
   flex: 1;
+  min-height: 0;
+  max-height: 100%;
   padding: 24px;
   overflow-y: auto;
   color: white;
-  padding-bottom: 100px; /* Safe padding for bottom navigation */
+  padding-bottom: 120px; /* Safe padding for bottom navigation */
 }
 
 [data-theme='light'] .sprint-backlog-view {

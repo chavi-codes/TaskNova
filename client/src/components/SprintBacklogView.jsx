@@ -478,10 +478,7 @@ export default function SprintBacklogView({
               {card.typeOfWork || 'task'}
             </span>
 
-            {/* Issue Key */}
-            <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'bold' }}>
-              {issueKey}
-            </span>
+
 
             {/* Title */}
             <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--ln-text)' }}>
