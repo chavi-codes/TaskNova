@@ -15,7 +15,8 @@ import {
   Pencil,
   Trash,
   Link,
-  Briefcase
+  Briefcase,
+  FileText
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -93,6 +94,10 @@ export default function CardModal({
   const [editingSubtaskId, setEditingSubtaskId] = useState(null);
   const [editingSubtaskTitle, setEditingSubtaskTitle] = useState('');
 
+  const [activeDescChecklistId, setActiveDescChecklistId] = useState(null);
+  const [activeDescSubtaskId, setActiveDescSubtaskId] = useState(null);
+  const [editingDescText, setEditingDescText] = useState('');
+
   const completedCount = checklist.filter((i) => i.completed).length;
   const progressPercent = checklist.length
     ? Math.round((completedCount / checklist.length) * 100)
@@ -113,6 +118,9 @@ export default function CardModal({
       setComments(card.comments || []);
       setSubtasks(card.subtasks || []);
       setTargetListId(listId);
+      setActiveDescChecklistId(null);
+      setActiveDescSubtaskId(null);
+      setEditingDescText('');
     } else {
       // Same card updated: sync states if they have not been edited locally (keeps user inputs safe)
       if (card.title !== prevCard.title && title === prevCard.title) {
@@ -452,6 +460,72 @@ export default function CardModal({
     });
   };
 
+  const handleToggleChecklistDesc = (item) => {
+    setActiveDescSubtaskId(null);
+    if (activeDescChecklistId === item.id) {
+      setActiveDescChecklistId(null);
+      setEditingDescText('');
+    } else {
+      setActiveDescChecklistId(item.id);
+      setEditingDescText(item.description || '');
+    }
+  };
+
+  const handleSaveChecklistDesc = async (itemId) => {
+    const updated = checklist.map((item) =>
+      item.id === itemId
+        ? { ...item, description: editingDescText.trim() }
+        : item
+    );
+    setChecklist(updated);
+    setActiveDescChecklistId(null);
+    setEditingDescText('');
+
+    await onUpdateCard(card.id, {
+      title,
+      description,
+      dueDate,
+      checklist: updated,
+      labels,
+      comments,
+      subtasks,
+      typeOfWork
+    });
+  };
+
+  const handleToggleSubtaskDesc = (sub) => {
+    setActiveDescChecklistId(null);
+    if (activeDescSubtaskId === sub.id) {
+      setActiveDescSubtaskId(null);
+      setEditingDescText('');
+    } else {
+      setActiveDescSubtaskId(sub.id);
+      setEditingDescText(sub.description || '');
+    }
+  };
+
+  const handleSaveSubtaskDesc = async (subId) => {
+    const updated = subtasks.map((sub) =>
+      sub.id === subId
+        ? { ...sub, description: editingDescText.trim() }
+        : sub
+    );
+    setSubtasks(updated);
+    setActiveDescSubtaskId(null);
+    setEditingDescText('');
+
+    await onUpdateCard(card.id, {
+      title,
+      description,
+      dueDate,
+      checklist,
+      labels,
+      comments,
+      subtasks: updated,
+      typeOfWork
+    });
+  };
+
   const filteredLabels = availableLabels.filter((label) =>
     label.name
       .toLowerCase()
@@ -726,32 +800,103 @@ export default function CardModal({
               )}
 
               {checklist.map((item) => (
-                <div
-                  key={item.id}
-                  className="checklist-item"
-                >
-                  <input
-                    type="checkbox"
-                    checked={item.completed}
-                    onChange={() =>
-                      toggleChecklist(item.id)
-                    }
-                    style={{
-                      width: '16px',
-                      height: '16px',
-                      cursor: 'pointer'
-                    }}
-                  />
-
-                  <span
-                    className={`checklist-item-text${
-                      item.completed
-                        ? ' completed'
-                        : ''
-                    }`}
+                <div key={item.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px', width: '100%' }}>
+                  <div
+                    className="checklist-item"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
                   >
-                    {item.text}
-                  </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <input
+                        type="checkbox"
+                        checked={item.completed}
+                        onChange={() =>
+                          toggleChecklist(item.id)
+                        }
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          cursor: 'pointer'
+                        }}
+                      />
+
+                      <span
+                        className={`checklist-item-text${
+                          item.completed
+                            ? ' completed'
+                            : ''
+                        }`}
+                      >
+                        {item.text}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggleChecklistDesc(item)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: item.description ? '#3b82f6' : 'var(--text-secondary)',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: item.description ? 1 : 0.6,
+                        transition: 'all 0.2s'
+                      }}
+                      title={item.description ? 'Edit Description (exists)' : 'Add Description'}
+                    >
+                      <FileText size={14} />
+                    </button>
+                  </div>
+
+                  {activeDescChecklistId === item.id && (
+                    <div className="inline-desc-editor" style={{
+                      padding: '8px 12px',
+                      background: 'var(--bg-muted)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '6px',
+                      marginTop: '4px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      width: '100%'
+                    }}>
+                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>
+                        Description for {item.text}
+                      </div>
+                      <textarea
+                        className="modal-textarea"
+                        style={{ minHeight: '60px', padding: '6px', fontSize: '12px' }}
+                        value={editingDescText}
+                        onChange={(e) => setEditingDescText(e.target.value)}
+                        placeholder="Add description about this task..."
+                        autoFocus
+                      />
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                        <button
+                          type="button"
+                          className="btn-create"
+                          style={{ padding: '4px 10px', fontSize: '11px', height: '24px' }}
+                          onClick={() => handleSaveChecklistDesc(item.id)}
+                        >
+                          Save
+                        </button>
+                        <button
+                          type="button"
+                          className="side-btn"
+                          style={{ padding: '4px 10px', fontSize: '11px', height: '24px' }}
+                          onClick={() => {
+                            setActiveDescChecklistId(null);
+                            setEditingDescText('');
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
 
@@ -817,7 +962,7 @@ export default function CardModal({
                     title="Manage & Select Labels"
                     className="label-action-btn"
                   >
-                    <Pencil size={14} />
+                    <Plus size={14} />
                   </button>
                   <button
                     type="button"
@@ -1013,74 +1158,149 @@ export default function CardModal({
               {/* List of Subtasks */}
               <div className="subtasks-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                 {subtasks.map((sub) => (
-                  <div key={sub.id} className={`subtask-item ${sub.status}`}>
-                    {/* Checkbox Icon */}
-                    {sub.status === 'done' ? (
-                      <CheckSquare
-                        size={16}
-                        style={{ color: '#10b981', cursor: 'pointer', flexShrink: 0 }}
-                        onClick={() => handleToggleSubtaskCheckbox(sub)}
-                      />
-                    ) : sub.status === 'in_progress' ? (
-                      <Square
-                        size={16}
-                        style={{ color: '#0284c7', cursor: 'pointer', flexShrink: 0 }}
-                        onClick={() => handleToggleSubtaskCheckbox(sub)}
-                      />
-                    ) : (
-                      <Square
-                        size={16}
-                        style={{ color: '#94a3b8', cursor: 'pointer', flexShrink: 0 }}
-                        onClick={() => handleToggleSubtaskCheckbox(sub)}
-                      />
-                    )}
+                  <div key={sub.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px', width: '100%' }}>
+                    <div className={`subtask-item ${sub.status}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '8px' }}>
+                      {/* Checkbox Icon */}
+                      {sub.status === 'done' ? (
+                        <CheckSquare
+                          size={16}
+                          style={{ color: '#10b981', cursor: 'pointer', flexShrink: 0 }}
+                          onClick={() => handleToggleSubtaskCheckbox(sub)}
+                        />
+                      ) : sub.status === 'in_progress' ? (
+                        <Square
+                          size={16}
+                          style={{ color: '#0284c7', cursor: 'pointer', flexShrink: 0 }}
+                          onClick={() => handleToggleSubtaskCheckbox(sub)}
+                        />
+                      ) : (
+                        <Square
+                          size={16}
+                          style={{ color: '#94a3b8', cursor: 'pointer', flexShrink: 0 }}
+                          onClick={() => handleToggleSubtaskCheckbox(sub)}
+                        />
+                      )}
 
-                    {/* Editable Text */}
-                    {editingSubtaskId === sub.id ? (
-                      <input
-                        type="text"
-                        className="subtask-text-input"
-                        value={editingSubtaskTitle}
-                        onChange={(e) => setEditingSubtaskTitle(e.target.value)}
-                        onBlur={() => handleSaveSubtaskTitle(sub.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleSaveSubtaskTitle(sub.id);
-                          } else if (e.key === 'Escape') {
-                            setEditingSubtaskId(null);
-                          }
+                      {/* Editable Text */}
+                      {editingSubtaskId === sub.id ? (
+                        <input
+                          type="text"
+                          className="subtask-text-input"
+                          value={editingSubtaskTitle}
+                          onChange={(e) => setEditingSubtaskTitle(e.target.value)}
+                          onBlur={() => handleSaveSubtaskTitle(sub.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleSaveSubtaskTitle(sub.id);
+                            } else if (e.key === 'Escape') {
+                              setEditingSubtaskId(null);
+                            }
+                          }}
+                          autoFocus
+                          style={{ flex: 1 }}
+                        />
+                      ) : (
+                        <span
+                          className={`subtask-text-span ${sub.status === 'done' ? 'done' : ''}`}
+                          onClick={() => handleStartEditSubtask(sub)}
+                          style={{ flex: 1 }}
+                        >
+                          {sub.title}
+                        </span>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleToggleSubtaskDesc(sub)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: sub.description ? '#8b5cf6' : 'var(--text-secondary)',
+                          cursor: 'pointer',
+                          padding: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: sub.description ? 1 : 0.6,
+                          transition: 'all 0.2s',
+                          marginRight: '4px',
+                          flexShrink: 0
                         }}
-                        autoFocus
-                      />
-                    ) : (
-                      <span
-                        className={`subtask-text-span ${sub.status === 'done' ? 'done' : ''}`}
-                        onClick={() => handleStartEditSubtask(sub)}
+                        title={sub.description ? 'Edit Description (exists)' : 'Add Description'}
                       >
-                        {sub.title}
-                      </span>
+                        <FileText size={14} />
+                      </button>
+
+                      {/* Status Dropdown */}
+                      <select
+                        className="subtask-status-select"
+                        value={sub.status}
+                        onChange={(e) => handleUpdateSubtaskStatus(sub.id, e.target.value)}
+                        style={{ flexShrink: 0 }}
+                      >
+                        <option value="todo">To Do</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="done">Done</option>
+                      </select>
+
+                      {/* Delete Button */}
+                      <button
+                        type="button"
+                        className="subtask-delete-btn"
+                        onClick={() => handleDeleteSubtask(sub.id)}
+                        title="Delete Subtask"
+                        style={{ flexShrink: 0 }}
+                      >
+                        <Trash size={14} />
+                      </button>
+                    </div>
+
+                    {activeDescSubtaskId === sub.id && (
+                      <div className="inline-desc-editor" style={{
+                        padding: '8px 12px',
+                        background: 'var(--bg-muted)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '6px',
+                        marginTop: '4px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                        width: '100%'
+                      }}>
+                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>
+                          Description for {sub.title}
+                        </div>
+                        <textarea
+                          className="modal-textarea"
+                          style={{ minHeight: '60px', padding: '6px', fontSize: '12px' }}
+                          value={editingDescText}
+                          onChange={(e) => setEditingDescText(e.target.value)}
+                          placeholder="Add subtask description..."
+                          autoFocus
+                        />
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                          <button
+                            type="button"
+                            className="btn-create"
+                            style={{ padding: '4px 10px', fontSize: '11px', height: '24px' }}
+                            onClick={() => handleSaveSubtaskDesc(sub.id)}
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            className="side-btn"
+                            style={{ padding: '4px 10px', fontSize: '11px', height: '24px' }}
+                            onClick={() => {
+                              setActiveDescSubtaskId(null);
+                              setEditingDescText('');
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
                     )}
-
-                    {/* Status Dropdown */}
-                    <select
-                      className="subtask-status-select"
-                      value={sub.status}
-                      onChange={(e) => handleUpdateSubtaskStatus(sub.id, e.target.value)}
-                    >
-                      <option value="todo">To Do</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="done">Done</option>
-                    </select>
-
-                    {/* Delete Button */}
-                    <button
-                      type="button"
-                      className="subtask-delete-btn"
-                      onClick={() => handleDeleteSubtask(sub.id)}
-                      title="Delete Subtask"
-                    >
-                      <Trash size={14} />
-                    </button>
                   </div>
                 ))}
               </div>
