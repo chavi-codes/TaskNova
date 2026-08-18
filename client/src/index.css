@@ -2622,6 +2622,18 @@ body {
   }
 }
 
+.sprint-backlog-view {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  color: white;
+  padding-bottom: 100px; /* Safe padding for bottom navigation */
+}
+
+[data-theme='light'] .sprint-backlog-view {
+  color: var(--ln-text);
+}
+
 
 
 

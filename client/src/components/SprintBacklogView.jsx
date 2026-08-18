@@ -249,7 +249,8 @@ export default function SprintBacklogView({
   };
 
   return (
-    <div className="sprint-backlog-view" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+    <div className="sprint-backlog-view">
+      <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
       {/* View Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
@@ -415,7 +416,8 @@ export default function SprintBacklogView({
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 
   // Renders a single row in the Sprint list
   function renderWorkItemRow(card, currentSprintId) {
