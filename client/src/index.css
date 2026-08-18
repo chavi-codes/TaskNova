@@ -2581,5 +2581,47 @@ body {
   font-weight: 600;
 }
 
+/* ==========================================================================
+   Sprint Backlog View CSS Styles (Jira-style information density)
+   ========================================================================== */
+.sprint-work-item-row {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.sprint-work-item-row:hover {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-color: #475569 !important;
+}
+
+[data-theme='light'] .sprint-work-item-row:hover {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+.sprint-work-item-row.done {
+  opacity: 0.85;
+}
+
+.sprint-work-item-row.done .card-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.expanded-details-pane {
+  animation: slideDownFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 
 

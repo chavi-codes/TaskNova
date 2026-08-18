@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import BoardView from './components/BoardView';
 import PlannerView from './components/PlannerView';
+import SprintBacklogView from './components/SprintBacklogView';
 import BottomDock from './components/BottomDock';
 import CardModal from './components/CardModal';
 import LoginModal from './components/LoginModal';
@@ -195,6 +196,22 @@ export default function App() {
     }
   };
 
+  const handleUpdateBoard = async (newBoardData) => {
+    try {
+      const res = await fetch('/api/board', {
+        method: 'PUT',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(newBoardData)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBoard(data.board);
+      }
+    } catch (err) {
+      console.error('Error updating board:', err);
+    }
+  };
+
   const inboxList = board.lists.find((l) => l.isInbox) || { id: 'list-inbox', cards: [] };
 
   return (
@@ -259,7 +276,7 @@ export default function App() {
               onAddInboxCard={(title) => handleAddCard(inboxList.id, title)}
             />
 
-            {/* Workspace View (Board or Planner) */}
+            {/* Workspace View (Board, Planner or Sprint Backlog) */}
             {activeView === 'board' ? (
               <BoardView
                 lists={board.lists}
@@ -273,13 +290,26 @@ export default function App() {
                 onDeleteList={handleDeleteList}
                 onMoveCard={handleMoveCard}
               />
-            ) : (
+            ) : activeView === 'planner' ? (
               <PlannerView
                 lists={board.lists}
                 onCardClick={(card, listId) => {
                   setActiveCard(card);
                   setActiveCardListId(listId);
                 }}
+              />
+            ) : (
+              <SprintBacklogView
+                board={board}
+                lists={board.lists}
+                searchQuery={searchQuery}
+                onCardClick={(card, listId) => {
+                  setActiveCard(card);
+                  setActiveCardListId(listId);
+                }}
+                onUpdateCard={handleUpdateCard}
+                onMoveCard={handleMoveCard}
+                onUpdateBoard={handleUpdateBoard}
               />
             )}
           </div>

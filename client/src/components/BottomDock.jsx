@@ -1,5 +1,5 @@
 import React from 'react';
-import { Inbox, Calendar, Layout, Layers } from 'lucide-react';
+import { Inbox, Calendar, Layout, Layers, Trophy } from 'lucide-react';
 
 export default function BottomDock({
   activeView,
@@ -31,6 +31,14 @@ export default function BottomDock({
       >
         <Layout size={16} />
         <span>Board</span>
+      </button>
+
+      <button
+        className={`dock-item ${activeView === 'sprint' ? 'active' : ''}`}
+        onClick={() => setActiveView('sprint')}
+      >
+        <Trophy size={16} />
+        <span>Sprint</span>
       </button>
 
       <button
