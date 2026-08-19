@@ -4,7 +4,7 @@ import Sidebar from './components/Sidebar';
 import BoardView from './components/BoardView';
 import PlannerView from './components/PlannerView';
 import SprintBacklogView from './components/SprintBacklogView';
-import BottomDock from './components/BottomDock';
+import NavigationSidebar from './components/NavigationSidebar';
 import CardModal from './components/CardModal';
 import LoginModal from './components/LoginModal';
 import SignupModal from './components/SignupModal';
@@ -20,6 +20,8 @@ export default function App() {
   const [board, setBoard] = useState(EMPTY_BOARD);
   const [activeView, setActiveView] = useState('board'); // 'board' | 'planner'
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isNavExpanded, setIsNavExpanded] = useState(true);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCard, setActiveCard] = useState(null);
   const [activeCardListId, setActiveCardListId] = useState(null);
@@ -226,164 +228,175 @@ export default function App() {
   const inboxList = board.lists.find((l) => l.isInbox) || { id: 'list-inbox', cards: [] };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {/* Top Header */}
-      <Header
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        onAddCardClick={() => {
-          const firstBoardList = board.lists.find((l) => !l.isInbox);
-          if (firstBoardList) {
-            const title = prompt('Enter card title:');
-            if (title) handleAddCard(firstBoardList.id, title);
-          }
-        }}
-        onOpenLogin={() => setAuthModal('login')}
-        onOpenSignup={() => setAuthModal('signup')}
-      />
-
-      {isAuthenticated ? (
-        <>
-          {/* Board Title Bar */}
-          <div className="board-bar">
-            <div className="board-title">
-              <span>{board.title}</span>
-            </div>
-            <div className="board-bar-actions">
-              <label className="toggle-setting-label" style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                color: '#b6c2cf',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                padding: '6px 12px',
-                borderRadius: '8px',
-                userSelect: 'none',
-                border: '1px solid rgba(255, 255, 255, 0.08)'
-              }}>
-                <input
-                  type="checkbox"
-                  checked={autoMoveSetting}
-                  onChange={(e) => setAutoMoveSetting(e.target.checked)}
-                  style={{ cursor: 'pointer' }}
-                />
-                <span>Auto-move completed tasks to Done</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Main Workspace Layout */}
-          <div className="main-container">
-            {/* Left Inbox Sidebar */}
-            <Sidebar
-              inboxList={inboxList}
-              isOpen={isSidebarOpen}
-              onCardClick={(card, listId) => {
-                setActiveCard(card);
-                setActiveCardListId(listId);
-              }}
-              onAddInboxCard={(title) => handleAddCard(inboxList.id, title)}
-              onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-            />
-
-            {!isSidebarOpen && (
-              <button
-                className="sidebar-expand-toggle-btn"
-                onClick={() => setIsSidebarOpen(true)}
-                title="Expand Inbox Sidebar"
-              >
-                <ChevronRight size={16} />
-              </button>
-            )}
-
-            {isSidebarOpen && (
-              <div className="sidebar-backdrop" onClick={() => setIsSidebarOpen(false)} />
-            )}
-
-            {/* Workspace View (Board, Planner or Sprint Backlog) */}
-            {activeView === 'board' ? (
-              <BoardView
-                lists={board.lists}
-                searchQuery={searchQuery}
-                onCardClick={(card, listId) => {
-                  setActiveCard(card);
-                  setActiveCardListId(listId);
-                }}
-                onAddCard={handleAddCard}
-                onAddList={handleAddList}
-                onDeleteList={handleDeleteList}
-                onMoveCard={handleMoveCard}
-              />
-            ) : activeView === 'planner' ? (
-              <PlannerView
-                lists={board.lists}
-                onCardClick={(card, listId) => {
-                  setActiveCard(card);
-                  setActiveCardListId(listId);
-                }}
-              />
-            ) : (
-              <SprintBacklogView
-                board={board}
-                lists={board.lists}
-                searchQuery={searchQuery}
-                onCardClick={(card, listId) => {
-                  setActiveCard(card);
-                  setActiveCardListId(listId);
-                }}
-                onUpdateCard={handleUpdateCard}
-                onMoveCard={handleMoveCard}
-                onUpdateBoard={handleUpdateBoard}
-              />
-            )}
-          </div>
-
-          {/* Floating Bottom Navigation Dock */}
-          <BottomDock
-            activeView={activeView}
-            setActiveView={setActiveView}
-            isSidebarOpen={isSidebarOpen}
-            setIsSidebarOpen={setIsSidebarOpen}
-          />
-
-          {/* Card Details Modal */}
-          {activeCard && (
-            <CardModal
-              card={activeCard}
-              listId={activeCardListId}
-              lists={board.lists}
-              onClose={() => setActiveCard(null)}
-              onUpdateCard={handleUpdateCard}
-              onDeleteCard={handleDeleteCard}
-              onMoveCard={handleMoveCard}
-              autoMoveSetting={autoMoveSetting}
-            />
-          )}
-
-          {showOnboarding && (
-            <OnboardingTour onFinish={() => setShowOnboarding(false)} />
-          )}
-        </>
-      ) : (
-        <div className="gate-screen">
-          <div className="gate-card">
-            <div className="gate-icon"><LayoutGrid size={26} /></div>
-            <h1>Organize work, your way</h1>
-            <p>Log in or create a free account to open your boards, lists, and cards.</p>
-            <div className="gate-actions">
-              <button className="auth-submit-btn" onClick={() => setAuthModal('signup')}>
-                <Sparkles size={16} />
-                <span>Get started free</span>
-              </button>
-              <button className="gate-login-btn" onClick={() => setAuthModal('login')}>
-                I already have an account
-              </button>
-            </div>
-          </div>
-        </div>
+    <div style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden', backgroundColor: 'var(--sprint-page-bg)' }}>
+      {isAuthenticated && (
+        <NavigationSidebar
+          activeView={activeView}
+          setActiveView={setActiveView}
+          isInboxOpen={isSidebarOpen}
+          setIsInboxOpen={setIsSidebarOpen}
+          isNavExpanded={isNavExpanded}
+          setIsNavExpanded={setIsNavExpanded}
+          isMobileNavOpen={isMobileNavOpen}
+          setIsMobileNavOpen={setIsMobileNavOpen}
+          onSwitchBoards={() => alert('Switch board feature: You are currently viewing "My Board"!')}
+          autoMoveSetting={autoMoveSetting}
+          setAutoMoveSetting={setAutoMoveSetting}
+        />
       )}
+
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100vh', minWidth: 0, overflow: 'hidden' }}>
+        {/* Top Header */}
+        <Header
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          onAddCardClick={() => {
+            const firstBoardList = board.lists.find((l) => !l.isInbox);
+            if (firstBoardList) {
+              const title = prompt('Enter card title:');
+              if (title) handleAddCard(firstBoardList.id, title);
+            }
+          }}
+          onOpenLogin={() => setAuthModal('login')}
+          onOpenSignup={() => setAuthModal('signup')}
+          onToggleMobileNav={() => setIsMobileNavOpen(!isMobileNavOpen)}
+        />
+
+        {isAuthenticated ? (
+          <>
+            {/* Board Title Bar */}
+            <div className="board-bar">
+              <div className="board-title">
+                <span>{board.title}</span>
+              </div>
+              <div className="board-bar-actions">
+                <label className="toggle-setting-label" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  color: '#b6c2cf',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  padding: '6px 12px',
+                  borderRadius: '8px',
+                  userSelect: 'none',
+                  border: '1px solid rgba(255, 255, 255, 0.08)'
+                }}>
+                  <input
+                    type="checkbox"
+                    checked={autoMoveSetting}
+                    onChange={(e) => setAutoMoveSetting(e.target.checked)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span>Auto-move completed tasks to Done</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Main Workspace Layout */}
+            <div className="main-container">
+              {/* Left Inbox Sidebar */}
+              <Sidebar
+                inboxList={inboxList}
+                isOpen={isSidebarOpen}
+                onCardClick={(card, listId) => {
+                  setActiveCard(card);
+                  setActiveCardListId(listId);
+                }}
+                onAddInboxCard={(title) => handleAddCard(inboxList.id, title)}
+                onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+              />
+
+              {!isSidebarOpen && (
+                <button
+                  className="sidebar-expand-toggle-btn"
+                  onClick={() => setIsSidebarOpen(true)}
+                  title="Expand Inbox Sidebar"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              )}
+
+              {isSidebarOpen && (
+                <div className="sidebar-backdrop" onClick={() => setIsSidebarOpen(false)} />
+              )}
+
+              {/* Workspace View (Board, Planner or Sprint Backlog) */}
+              {activeView === 'board' ? (
+                <BoardView
+                  lists={board.lists}
+                  searchQuery={searchQuery}
+                  onCardClick={(card, listId) => {
+                    setActiveCard(card);
+                    setActiveCardListId(listId);
+                  }}
+                  onAddCard={handleAddCard}
+                  onAddList={handleAddList}
+                  onDeleteList={handleDeleteList}
+                  onMoveCard={handleMoveCard}
+                />
+              ) : activeView === 'planner' ? (
+                <PlannerView
+                  lists={board.lists}
+                  onCardClick={(card, listId) => {
+                    setActiveCard(card);
+                    setActiveCardListId(listId);
+                  }}
+                />
+              ) : (
+                <SprintBacklogView
+                  board={board}
+                  lists={board.lists}
+                  searchQuery={searchQuery}
+                  onCardClick={(card, listId) => {
+                    setActiveCard(card);
+                    setActiveCardListId(listId);
+                  }}
+                  onUpdateCard={handleUpdateCard}
+                  onMoveCard={handleMoveCard}
+                  onUpdateBoard={handleUpdateBoard}
+                />
+              )}
+            </div>
+
+            {/* Card Details Modal */}
+            {activeCard && (
+              <CardModal
+                card={activeCard}
+                listId={activeCardListId}
+                lists={board.lists}
+                onClose={() => setActiveCard(null)}
+                onUpdateCard={handleUpdateCard}
+                onDeleteCard={handleDeleteCard}
+                onMoveCard={handleMoveCard}
+                autoMoveSetting={autoMoveSetting}
+              />
+            )}
+
+            {showOnboarding && (
+              <OnboardingTour onFinish={() => setShowOnboarding(false)} />
+            )}
+          </>
+        ) : (
+          <div className="gate-screen">
+            <div className="gate-card">
+              <div className="gate-icon"><LayoutGrid size={26} /></div>
+              <h1>Organize work, your way</h1>
+              <p>Log in or create a free account to open your boards, lists, and cards.</p>
+              <div className="gate-actions">
+                <button className="auth-submit-btn" onClick={() => setAuthModal('signup')}>
+                  <Sparkles size={16} />
+                  <span>Get started free</span>
+                </button>
+                <button className="gate-login-btn" onClick={() => setAuthModal('login')}>
+                  I already have an account
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       {authModal === 'login' && (
         <LoginModal
