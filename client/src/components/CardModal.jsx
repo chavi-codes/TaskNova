@@ -119,6 +119,7 @@ export default function CardModal({
       setActiveDescChecklistId(null);
       setActiveDescSubtaskId(null);
       setEditingDescText('');
+      evaluateWorkflowMove(card);
     } else {
       // Same card updated: sync states if they have not been edited locally (keeps user inputs safe)
       if (card.title !== prevCard.title && title === prevCard.title) {
@@ -234,8 +235,15 @@ export default function CardModal({
     const doneList = lists.find((l) => l.title?.toLowerCase() === 'done');
     const doneListId = doneList ? doneList.id : 'NOT_FOUND';
 
+    // Find the correct current list ID of the card from lists prop
+    let currentListId = listId;
+    const parentList = lists.find((l) => l.cards.some((c) => c.id === freshCard.id));
+    if (parentList) {
+      currentListId = parentList.id;
+    }
+
     console.log('[AutoMove] Evaluation for Card ID:', freshCard.id);
-    console.log('[AutoMove] Current List ID:', listId, 'Done List ID:', doneListId);
+    console.log('[AutoMove] Current List ID:', currentListId, 'Done List ID:', doneListId);
     console.log('[AutoMove] Associated Tasks count:', completedTasks, '/', totalTasks, 'Complete:', tasksComplete);
     console.log('[AutoMove] Subtasks count:', completedSubs, '/', totalSubs, 'Complete:', subtasksComplete);
 
@@ -244,7 +252,7 @@ export default function CardModal({
       return;
     }
 
-    if (listId === doneList.id) {
+    if (currentListId === doneList.id) {
       console.log('[AutoMove] Card is already in Done column. Skipping move.');
       return;
     }
@@ -265,7 +273,7 @@ export default function CardModal({
 
     if (shouldMove) {
       console.log('[AutoMove] Condition met! Moving card to Done...');
-      await onMoveCard(freshCard.id, listId, doneList.id);
+      await onMoveCard(freshCard.id, currentListId, doneList.id);
       console.log('[AutoMove] onMoveCard API completed successfully.');
     } else {
       console.log('[AutoMove] Condition not met. Card remains in current list.');
