@@ -244,14 +244,95 @@ body {
   flex-direction: column;
   padding: 16px;
   gap: 12px;
-  transition: width 0.3s ease;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-right-color 0.3s ease;
   z-index: 10;
 }
 .sidebar-inbox.collapsed {
-  width: 0;
-  padding: 0;
-  overflow: hidden;
-  border: none;
+  width: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+  overflow: hidden !important;
+  border-right-color: transparent !important;
+}
+
+/* Floating Expand button style */
+.sidebar-expand-toggle-btn {
+  position: absolute;
+  left: 12px;
+  top: 16px;
+  z-index: 40;
+  background: var(--sidebar-bg);
+  border: 1px solid var(--sidebar-border);
+  color: var(--text-primary);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s ease;
+}
+.sidebar-expand-toggle-btn:hover {
+  background: var(--card-hover);
+  transform: scale(1.1);
+  color: white;
+}
+
+/* Sidebar Backdrop on Mobile overlay drawer */
+.sidebar-backdrop {
+  display: none;
+}
+
+/* Tablet Sidebar Width Adjustment */
+@media (max-width: 1024px) {
+  .sidebar-inbox {
+    width: 220px;
+    padding: 12px;
+  }
+}
+
+/* Mobile Sidebar Drawer Overlay */
+@media (max-width: 768px) {
+  .sidebar-inbox {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    height: 100%;
+    z-index: 50; /* Above content */
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.55);
+    transform: translateX(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .sidebar-inbox.collapsed {
+    transform: translateX(-100%) !important;
+    width: 260px !important; /* Keep width but slide offscreen */
+    padding: 16px !important;
+    border-right-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 45; /* Under sidebar overlay but above main view */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .sidebar-expand-toggle-btn {
+    left: 12px;
+    top: 16px;
+    z-index: 40;
+  }
 }
 .inbox-header {
   display: flex;

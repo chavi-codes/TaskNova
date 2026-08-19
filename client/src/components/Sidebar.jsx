@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Inbox, Plus, SlidersHorizontal, MoreHorizontal, Mail } from 'lucide-react';
+import { Inbox, Plus, SlidersHorizontal, MoreHorizontal, Mail, ChevronLeft } from 'lucide-react';
 
 const getContrastColor = (hexColor) => {
   if (!hexColor) return '#ffffff';
@@ -12,11 +12,9 @@ const getContrastColor = (hexColor) => {
   return yiq >= 150 ? '#111827' : '#ffffff';
 };
 
-export default function Sidebar({ inboxList, isOpen, onCardClick, onAddInboxCard }) {
+export default function Sidebar({ inboxList, isOpen, onCardClick, onAddInboxCard, onToggleSidebar }) {
   const [newCardTitle, setNewCardTitle] = useState('');
   const [isAdding, setIsAdding] = useState(false);
-
-  if (!isOpen) return null;
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -27,18 +25,21 @@ export default function Sidebar({ inboxList, isOpen, onCardClick, onAddInboxCard
   };
 
   return (
-    <aside className="sidebar-inbox">
+    <aside className={`sidebar-inbox ${isOpen ? '' : 'collapsed'}`}>
       <div className="inbox-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Inbox size={18} />
           <span>Inbox</span>
         </div>
-        <div style={{ display: 'flex', gap: '4px' }}>
+        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
           <button className="board-btn" style={{ padding: '4px' }}>
             <SlidersHorizontal size={14} />
           </button>
           <button className="board-btn" style={{ padding: '4px' }}>
             <MoreHorizontal size={14} />
+          </button>
+          <button className="board-btn" style={{ padding: '4px' }} onClick={onToggleSidebar} title="Collapse Sidebar">
+            <ChevronLeft size={16} />
           </button>
         </div>
       </div>

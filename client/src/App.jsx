@@ -10,7 +10,7 @@ import LoginModal from './components/LoginModal';
 import SignupModal from './components/SignupModal';
 import OnboardingTour from './components/OnboardingTour';
 import { useAuth } from './context/AuthContext';
-import { LayoutGrid, Sparkles } from 'lucide-react';
+import { LayoutGrid, Sparkles, ChevronRight } from 'lucide-react';
 
 const EMPTY_BOARD = { title: '', lists: [] };
 
@@ -33,6 +33,17 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('tasknova_auto_move', autoMoveSetting);
   }, [autoMoveSetting]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setIsSidebarOpen(false);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Fetch board data only once the user is authenticated (protects dashboard data).
   // Re-fetches whenever the token changes, so switching accounts always pulls
@@ -274,7 +285,22 @@ export default function App() {
                 setActiveCardListId(listId);
               }}
               onAddInboxCard={(title) => handleAddCard(inboxList.id, title)}
+              onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
             />
+
+            {!isSidebarOpen && (
+              <button
+                className="sidebar-expand-toggle-btn"
+                onClick={() => setIsSidebarOpen(true)}
+                title="Expand Inbox Sidebar"
+              >
+                <ChevronRight size={16} />
+              </button>
+            )}
+
+            {isSidebarOpen && (
+              <div className="sidebar-backdrop" onClick={() => setIsSidebarOpen(false)} />
+            )}
 
             {/* Workspace View (Board, Planner or Sprint Backlog) */}
             {activeView === 'board' ? (
