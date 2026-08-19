@@ -312,7 +312,7 @@ export default function SprintBacklogView({
           <button
             onClick={() => setShowHiddenSprintsDropdown(!showHiddenSprintsDropdown)}
             className="side-btn"
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', fontSize: '13px', border: '1px solid var(--ln-border)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', fontSize: '13px', border: '1px solid var(--sprint-border)' }}
           >
             <Eye size={16} />
             Hidden Sprints ({sprints.filter(s => s.isHidden).length})
@@ -324,19 +324,19 @@ export default function SprintBacklogView({
               position: 'absolute',
               top: '42px',
               right: '125px',
-              background: 'var(--ln-card)',
-              border: '1px solid var(--ln-border)',
+              background: 'var(--sprint-details-bg)',
+              border: '1px solid var(--sprint-border)',
               borderRadius: '8px',
               boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
               zIndex: 100,
               minWidth: '220px',
               padding: '8px 0'
             }}>
-              <div style={{ fontSize: '11px', fontWeight: 'bold', padding: '6px 12px', borderBottom: '1px solid var(--ln-border)', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '11px', fontWeight: 'bold', padding: '6px 12px', borderBottom: '1px solid var(--sprint-border)', color: 'var(--sprint-text-muted)' }}>
                 HIDDEN SPRINTS
               </div>
               {sprints.filter(s => s.isHidden).length === 0 ? (
-                <div style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                <div style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--sprint-text-secondary)' }}>
                   No hidden sprints
                 </div>
               ) : (
@@ -348,9 +348,9 @@ export default function SprintBacklogView({
                     padding: '8px 12px',
                     fontSize: '13px',
                     gap: '10px',
-                    borderBottom: '1px solid rgba(255,255,255,0.03)'
+                    borderBottom: '1px solid var(--sprint-border)'
                   }}>
-                    <span style={{ fontWeight: '600' }}>{s.name}</span>
+                    <span style={{ fontWeight: '600', color: 'var(--sprint-text-primary)' }}>{s.name}</span>
                     <button
                       onClick={() => handleShowSprint(s.id)}
                       style={{
@@ -395,8 +395,8 @@ export default function SprintBacklogView({
 
         return (
           <div key={sprint.id} className="sprint-container" style={{
-            background: 'var(--ln-card)',
-            border: '1px solid var(--ln-border)',
+            background: 'var(--sprint-container-bg)',
+            border: '1px solid var(--sprint-border)',
             borderRadius: '10px',
             padding: '16px',
             marginBottom: '20px',
@@ -409,23 +409,23 @@ export default function SprintBacklogView({
               justifyContent: 'space-between',
               alignItems: 'center',
               gap: '12px',
-              borderBottom: '1px solid var(--ln-border)',
+              borderBottom: '1px solid var(--sprint-border)',
               paddingBottom: '12px',
               marginBottom: '12px'
             }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: '800' }}>{sprint.name}</h3>
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <h3 style={{ fontSize: '16px', fontWeight: '800', color: 'var(--sprint-text-primary)' }}>{sprint.name}</h3>
+                  <span style={{ fontSize: '12px', color: 'var(--sprint-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Calendar size={12} />
                     {sprint.startDate} – {sprint.endDate}
                   </span>
-                  <span className="card-badge" style={{ fontSize: '11px', background: 'var(--bg-muted)' }}>
+                  <span className="card-badge" style={{ fontSize: '11px', background: 'var(--sprint-input-bg)', color: 'var(--sprint-text-secondary)' }}>
                     {totalCount} work items
                   </span>
                 </div>
                 {sprint.description && (
-                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px', fontStyle: 'italic' }}>
+                  <p style={{ fontSize: '12px', color: 'var(--sprint-text-secondary)', marginTop: '4px', fontStyle: 'italic' }}>
                     {sprint.description}
                   </p>
                 )}
@@ -434,26 +434,31 @@ export default function SprintBacklogView({
               {/* Progress Summary & Completion controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', gap: '6px' }}>
-                  <span style={{ fontSize: '11px', padding: '2px 6px', background: '#e2e8f0', color: '#475569', borderRadius: '4px', fontWeight: 'bold' }}>
+                  <span className="stats-pill-todo" style={{ fontSize: '11px', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
                     {todoCount} To Do
                   </span>
-                  <span style={{ fontSize: '11px', padding: '2px 6px', background: '#bae6fd', color: '#0369a1', borderRadius: '4px', fontWeight: 'bold' }}>
+                  <span className="stats-pill-progress" style={{ fontSize: '11px', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
                     {progressCount} In Progress
                   </span>
-                  <span style={{ fontSize: '11px', padding: '2px 6px', background: '#d1fae5', color: '#047857', borderRadius: '4px', fontWeight: 'bold' }}>
+                  <span className="stats-pill-done" style={{ fontSize: '11px', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
                     {doneCount} Done
                   </span>
                 </div>
 
-                <div style={{ width: '120px', background: '#e2e8f0', height: '6px', borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
+                <div className="progress-bar-bg" style={{ width: '120px', height: '6px', borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
                   <div style={{ width: `${donePercent}%`, background: '#10b981', height: '100%' }} />
                 </div>
-                <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{donePercent}%</span>
+                <span style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--sprint-text-primary)' }}>{donePercent}%</span>
 
                 <button
                   onClick={() => handleCompleteSprint(sprint.id)}
-                  className="btn-create"
-                  style={{ background: 'var(--success)', borderColor: 'var(--success)', padding: '4px 10px', fontSize: '12px', height: '28px' }}
+                  className="btn-complete-sprint"
+                  style={{
+                    padding: '4px 10px',
+                    fontSize: '11px',
+                    borderRadius: '4px',
+                    fontWeight: 'bold'
+                  }}
                 >
                   Complete Sprint
                 </button>
@@ -469,21 +474,19 @@ export default function SprintBacklogView({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      border: '1px solid var(--ln-border)',
+                      border: '1px solid var(--sprint-border)',
                       borderRadius: '4px'
                     }}
                     title="Sprint options"
                   >
                     <MoreVertical size={14} />
-                  </button>
-
-                  {activeMenuSprintId === sprint.id && (
+                  </button>                   {activeMenuSprintId === sprint.id && (
                     <div style={{
                       position: 'absolute',
                       top: '32px',
                       right: '0',
-                      background: 'var(--ln-card)',
-                      border: '1px solid var(--ln-border)',
+                      background: 'var(--sprint-details-bg)',
+                      border: '1px solid var(--sprint-border)',
                       borderRadius: '8px',
                       boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
                       zIndex: 100,
@@ -492,12 +495,13 @@ export default function SprintBacklogView({
                     }}>
                       <button
                         onClick={() => handleHideSprint(sprint.id)}
+                        className="sprint-menu-item"
                         style={{
                           width: '100%',
                           textAlign: 'left',
                           background: 'none',
                           border: 'none',
-                          color: 'var(--ln-text)',
+                          color: 'var(--sprint-text-primary)',
                           padding: '8px 12px',
                           fontSize: '13px',
                           cursor: 'pointer',
@@ -514,6 +518,7 @@ export default function SprintBacklogView({
                           setDeleteConfirmSprint(sprint);
                           setActiveMenuSprintId(null);
                         }}
+                        className="sprint-menu-item danger"
                         style={{
                           width: '100%',
                           textAlign: 'left',
@@ -540,7 +545,7 @@ export default function SprintBacklogView({
             {/* SPRINT WORK ITEM LIST */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {sprintCards.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '24px 0', border: '1px dashed var(--ln-border)', borderRadius: '6px', color: 'var(--text-secondary)' }}>
+                <div style={{ textAlign: 'center', padding: '24px 0', border: '1px dashed var(--sprint-border)', borderRadius: '6px', color: 'var(--sprint-text-secondary)' }}>
                   <div style={{ fontSize: '13px', marginBottom: '8px' }}>No work items in this sprint</div>
                   <button
                     onClick={() => handleCreateWorkItem(sprint.id)}
@@ -560,8 +565,8 @@ export default function SprintBacklogView({
 
       {/* BACKLOG SECTION */}
       <div className="backlog-container" style={{
-        background: 'var(--ln-card)',
-        border: '1px solid var(--ln-border)',
+        background: 'var(--sprint-container-bg)',
+        border: '1px solid var(--sprint-border)',
         borderRadius: '10px',
         padding: '16px',
         boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
@@ -570,24 +575,24 @@ export default function SprintBacklogView({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderBottom: '1px solid var(--ln-border)',
+          borderBottom: '1px solid var(--sprint-border)',
           paddingBottom: '12px',
           marginBottom: '12px'
         }}>
           <div>
-            <h3 style={{ fontSize: '16px', fontWeight: '800' }}>Backlog</h3>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: '800', color: 'var(--sprint-text-primary)' }}>Backlog</h3>
+            <p style={{ fontSize: '12px', color: 'var(--sprint-text-secondary)' }}>
               Unscheduled work items needing prioritization.
             </p>
           </div>
-          <span className="card-badge" style={{ background: 'var(--bg-muted)' }}>
+          <span className="card-badge" style={{ background: 'var(--sprint-input-bg)', color: 'var(--sprint-text-secondary)' }}>
             {filteredCards.filter(c => !c.sprintId).length} work items
           </span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {filteredCards.filter(c => !c.sprintId).length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '24px 0', border: '1px dashed var(--ln-border)', borderRadius: '6px', color: 'var(--text-secondary)' }}>
+            <div style={{ textAlign: 'center', padding: '24px 0', border: '1px dashed var(--sprint-border)', borderRadius: '6px', color: 'var(--sprint-text-secondary)' }}>
               <div style={{ fontSize: '13px', marginBottom: '8px' }}>No work items in backlog</div>
               <button
                 onClick={() => handleCreateWorkItem(null)}
@@ -618,20 +623,20 @@ export default function SprintBacklogView({
           zIndex: 9999
         }}>
           <div style={{
-            background: 'var(--ln-card)',
-            border: '1px solid var(--ln-border)',
+            background: 'var(--sprint-details-bg)',
+            border: '1px solid var(--sprint-border)',
             borderRadius: '12px',
             padding: '24px',
             maxWidth: '400px',
             width: '90%',
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)'
           }}>
-            <h4 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px', color: 'var(--ln-text)' }}>
+            <h4 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px', color: 'var(--sprint-text-primary)' }}>
               Delete Sprint?
             </h4>
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.4' }}>
+            <p style={{ fontSize: '14px', color: 'var(--sprint-text-secondary)', marginBottom: '20px', lineHeight: '1.4' }}>
               Are you sure you want to delete this sprint? <br />
-              <strong style={{ color: 'var(--ln-text)' }}>{deleteConfirmSprint.name}</strong>
+              <strong style={{ color: 'var(--sprint-text-primary)' }}>{deleteConfirmSprint.name}</strong>
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
               <button
@@ -686,10 +691,10 @@ export default function SprintBacklogView({
 
     return (
       <div key={card.id} className={`sprint-work-item-row ${status}`} style={{
-        border: '1px solid var(--ln-border)',
+        border: '1px solid var(--sprint-border)',
         borderRadius: '6px',
         overflow: 'hidden',
-        background: isExpanded ? 'var(--bg-secondary)' : 'var(--ln-card)',
+        background: isExpanded ? 'var(--sprint-details-bg)' : 'var(--sprint-row-bg)',
         transition: 'all 0.2s'
       }}>
         {/* ROW HEADER CONTAINER */}
@@ -775,14 +780,11 @@ export default function SprintBacklogView({
                 handleStatusChange(card.id, e.target.value);
               }}
               onClick={(e) => e.stopPropagation()}
-              className="subtask-status-select"
+              className={`subtask-status-select ${status}`}
               style={{
                 padding: '2px 6px',
                 fontSize: '11px',
-                height: '24px',
-                borderColor: status === 'done' ? '#10b981' : status === 'in_progress' ? '#3b82f6' : 'var(--ln-border)',
-                background: status === 'done' ? '#d1fae5' : status === 'in_progress' ? '#dbeafe' : 'var(--bg-muted)',
-                color: status === 'done' ? '#047857' : status === 'in_progress' ? '#1d4ed8' : 'var(--ln-text)'
+                height: '24px'
               }}
             >
               <option value="todo">To Do</option>
@@ -802,8 +804,8 @@ export default function SprintBacklogView({
         {isExpanded && (
           <div className="expanded-details-pane" style={{
             padding: '16px 20px',
-            borderTop: '1px solid var(--ln-border)',
-            background: 'var(--ln-card)'
+            borderTop: '1px solid var(--sprint-border)',
+            background: 'var(--sprint-details-bg)'
           }}>
             {isEditing ? (
               // EDIT PANEL INLINE
@@ -886,25 +888,25 @@ export default function SprintBacklogView({
                   gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
                   gap: '12px',
                   paddingBottom: '12px',
-                  borderBottom: '1px dashed var(--ln-border)'
+                  borderBottom: '1px dashed var(--sprint-border)'
                 }}>
                   <div>
-                    <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'block' }}>TYPE OF WORK</span>
+                    <span style={{ fontSize: '10px', color: 'var(--sprint-text-muted)', display: 'block' }}>TYPE OF WORK</span>
                     <span style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'capitalize' }}>{card.typeOfWork || 'task'}</span>
                   </div>
                   <div>
-                    <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'block' }}>STATUS</span>
+                    <span style={{ fontSize: '10px', color: 'var(--sprint-text-muted)', display: 'block' }}>STATUS</span>
                     <span style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'capitalize' }}>{listInfo.title}</span>
                   </div>
 
                   <div>
-                    <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'block' }}>DUE DATE</span>
+                    <span style={{ fontSize: '10px', color: 'var(--sprint-text-muted)', display: 'block' }}>DUE DATE</span>
                     <span style={{ fontSize: '12px', fontWeight: 'bold', color: card.dueDate ? '#ef4444' : 'inherit' }}>
                       {card.dueDate || 'No due date'}
                     </span>
                   </div>
                   <div>
-                    <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'block' }}>SPRINT PLAN</span>
+                    <span style={{ fontSize: '10px', color: 'var(--sprint-text-muted)', display: 'block' }}>SPRINT PLAN</span>
                     <select
                       value={currentSprintId || ''}
                       onChange={(e) => handleMoveToSprint(card.id, e.target.value || null)}
@@ -921,11 +923,11 @@ export default function SprintBacklogView({
 
                 {/* Main Card Description */}
                 <div>
-                  <h5 style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-secondary)', marginBottom: '4px' }}>Description</h5>
+                  <h5 style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--sprint-text-secondary)', marginBottom: '4px' }}>Description</h5>
                   <p style={{
                     fontSize: '12.5px',
-                    color: card.description ? 'var(--ln-text)' : 'var(--text-muted)',
-                    background: 'var(--bg-secondary)',
+                    color: card.description ? 'var(--sprint-text-primary)' : 'var(--sprint-text-muted)',
+                    background: 'var(--sprint-input-bg)',
                     padding: '10px',
                     borderRadius: '6px',
                     lineHeight: '1.4',
@@ -938,7 +940,7 @@ export default function SprintBacklogView({
                 {/* Checklist (Associated Tasks) */}
                 {card.checklist && card.checklist.length > 0 && (
                   <div>
-                    <h5 style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                    <h5 style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--sprint-text-secondary)', marginBottom: '6px' }}>
                       Associated Tasks ({Math.round((card.checklist.filter(i => i.completed).length / card.checklist.length) * 100)}% Done)
                     </h5>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -947,13 +949,13 @@ export default function SprintBacklogView({
                           {item.completed ? <CheckCircle2 size={14} style={{ color: '#10b981' }} /> : <span style={{ width: '14px' }} />}
                           <span style={{
                             fontSize: '12px',
-                            color: item.completed ? 'var(--text-muted)' : 'var(--ln-text)',
+                            color: item.completed ? 'var(--sprint-text-muted)' : 'var(--sprint-text-primary)',
                             textDecoration: item.completed ? 'line-through' : 'none'
                           }}>
                             {item.text}
                           </span>
                           {item.description && (
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', marginLeft: '6px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--sprint-text-muted)', fontStyle: 'italic', marginLeft: '6px' }}>
                               ({item.description})
                             </span>
                           )}
@@ -973,8 +975,8 @@ export default function SprintBacklogView({
                       {card.subtasks.map((sub) => (
                         <div key={sub.id} style={{
                           padding: '6px 10px',
-                          background: 'var(--bg-secondary)',
-                          border: '1px solid var(--ln-border)',
+                          background: 'var(--sprint-input-bg)',
+                          border: '1px solid var(--sprint-border)',
                           borderRadius: '6px',
                           display: 'flex',
                           alignItems: 'flex-start',
@@ -992,19 +994,21 @@ export default function SprintBacklogView({
                               <span style={{
                                 fontSize: '12px',
                                 fontWeight: 'bold',
-                                color: sub.status === 'done' ? 'var(--text-muted)' : 'var(--ln-text)',
+                                color: sub.status === 'done' ? 'var(--sprint-text-muted)' : 'var(--sprint-text-primary)',
                                 textDecoration: sub.status === 'done' ? 'line-through' : 'none'
                               }}>
                                 {sub.title}
                               </span>
-                              <span style={{
-                                fontSize: '10px',
-                                padding: '1px 5px',
-                                borderRadius: '3px',
-                                textTransform: 'uppercase',
-                                background: sub.status === 'done' ? '#d1fae5' : sub.status === 'in_progress' ? '#dbeafe' : '#f1f5f9',
-                                color: sub.status === 'done' ? '#047857' : sub.status === 'in_progress' ? '#1d4ed8' : '#475569'
-                              }}>
+                              <span
+                                className={`subtask-status-badge ${sub.status}`}
+                                style={{
+                                  fontSize: '10px',
+                                  padding: '1px 5px',
+                                  borderRadius: '3px',
+                                  textTransform: 'uppercase',
+                                  fontWeight: 'bold'
+                                }}
+                              >
                                 {sub.status}
                               </span>
                             </div>
@@ -1033,7 +1037,7 @@ export default function SprintBacklogView({
                       gap: '4px'
                     }}
                   >
-                    <Edit size={12} /> Inline Edit
+                    <Edit size={12} /> Edit
                   </button>
 
                   <button

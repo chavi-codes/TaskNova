@@ -15,6 +15,17 @@
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
+
+  /* Sprint Backlog View Dark Theme Variables */
+  --sprint-page-bg: #0f1117;
+  --sprint-container-bg: #171b24;
+  --sprint-row-bg: #1d222c;
+  --sprint-details-bg: #202630;
+  --sprint-input-bg: #252b36;
+  --sprint-border: #374151;
+  --sprint-text-primary: #f8fafc;
+  --sprint-text-secondary: #cbd5e1;
+  --sprint-text-muted: #94a3b8;
 }
 
 * {
@@ -1495,6 +1506,17 @@ body {
   --card-hover: #F8FAFC;
   --text-primary: var(--ln-text-secondary);
   --text-muted: var(--text-muted);
+
+  /* Sprint Backlog View Light Theme Overrides */
+  --sprint-page-bg: #f8fafc;
+  --sprint-container-bg: #ffffff;
+  --sprint-row-bg: #f1f5f9;
+  --sprint-details-bg: #f8fafc;
+  --sprint-input-bg: #ffffff;
+  --sprint-border: #cbd5e1;
+  --sprint-text-primary: #111827;
+  --sprint-text-secondary: #374151;
+  --sprint-text-muted: #64748B;
 }
 [data-theme='light'] body {
   background: var(--ln-bg);
@@ -2628,13 +2650,217 @@ body {
   max-height: 100%;
   padding: 24px;
   overflow-y: auto;
-  color: white;
+  background-color: var(--sprint-page-bg) !important;
+  color: var(--sprint-text-primary) !important;
   padding-bottom: 120px; /* Safe padding for bottom navigation */
 }
 
-[data-theme='light'] .sprint-backlog-view {
-  color: var(--ln-text);
+/* Containers */
+.sprint-container, .backlog-container {
+  background-color: var(--sprint-container-bg) !important;
+  border: 1px solid var(--sprint-border) !important;
+  color: var(--sprint-text-primary) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
 }
+[data-theme='light'] .sprint-container, [data-theme='light'] .backlog-container {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+}
+
+.sprint-header h3, .sprint-header h4 {
+  color: var(--sprint-text-primary) !important;
+}
+.sprint-header span, .sprint-header p {
+  color: var(--sprint-text-secondary) !important;
+}
+
+/* Sprints stats counters styling */
+.sprint-header .stats-pill-todo {
+  background-color: var(--sprint-border) !important;
+  color: var(--sprint-text-secondary) !important;
+}
+.sprint-header .stats-pill-progress {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  color: #3b82f6 !important;
+}
+[data-theme='light'] .sprint-header .stats-pill-progress {
+  background-color: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+.sprint-header .stats-pill-done {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #10b981 !important;
+}
+[data-theme='light'] .sprint-header .stats-pill-done {
+  background-color: #d1fae5 !important;
+  color: #047857 !important;
+}
+
+/* Work item rows */
+.sprint-work-item-row {
+  border: 1px solid var(--sprint-border) !important;
+  background-color: var(--sprint-row-bg) !important;
+  color: var(--sprint-text-primary) !important;
+}
+
+.sprint-work-item-row:hover {
+  background-color: var(--sprint-input-bg) !important;
+  border-color: var(--sprint-text-muted) !important;
+}
+
+/* Status dropdown selector & Input fields */
+.subtask-status-select, .modal-mini-input, .modal-textarea, .modal-select {
+  background-color: var(--sprint-input-bg) !important;
+  color: var(--sprint-text-primary) !important;
+  border: 1px solid var(--sprint-border) !important;
+  outline: none;
+}
+.subtask-status-select:focus, .modal-mini-input:focus, .modal-textarea:focus, .modal-select:focus {
+  border-color: var(--ln-primary) !important;
+}
+
+.subtask-status-select option, .modal-select option {
+  background-color: var(--sprint-input-bg) !important;
+  color: var(--sprint-text-primary) !important;
+}
+
+/* Status specific overrides for subtask status select */
+.subtask-status-select.done {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  border-color: #10b981 !important;
+  color: #10b981 !important;
+}
+[data-theme='light'] .subtask-status-select.done {
+  background-color: #d1fae5 !important;
+  color: #047857 !important;
+}
+.subtask-status-select.in_progress {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  border-color: #3b82f6 !important;
+  color: #60a5fa !important;
+}
+[data-theme='light'] .subtask-status-select.in_progress {
+  background-color: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+.subtask-status-select.todo {
+  background-color: var(--sprint-input-bg) !important;
+  border-color: var(--sprint-border) !important;
+  color: var(--sprint-text-primary) !important;
+}
+
+/* Subtask status labels */
+.subtask-status-badge.done {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #10b981 !important;
+}
+[data-theme='light'] .subtask-status-badge.done {
+  background-color: #d1fae5 !important;
+  color: #047857 !important;
+}
+.subtask-status-badge.in_progress {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  color: #60a5fa !important;
+}
+[data-theme='light'] .subtask-status-badge.in_progress {
+  background-color: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+.subtask-status-badge.todo {
+  background-color: var(--sprint-border) !important;
+  color: var(--sprint-text-secondary) !important;
+}
+
+/* Expanded details pane */
+.expanded-details-pane {
+  background-color: var(--sprint-details-bg) !important;
+  border-top: 1px solid var(--sprint-border) !important;
+  color: var(--sprint-text-secondary) !important;
+}
+
+.expanded-details-pane h5 {
+  color: var(--sprint-text-muted) !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.expanded-details-pane p {
+  color: var(--sprint-text-secondary) !important;
+  background-color: var(--sprint-input-bg) !important;
+  border: 1px solid var(--sprint-border) !important;
+}
+
+/* Secondary Button with visible border */
+.sprint-backlog-view .side-btn {
+  border: 1px solid var(--sprint-border) !important;
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  color: var(--sprint-text-secondary) !important;
+}
+[data-theme='light'] .sprint-backlog-view .side-btn {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+.sprint-backlog-view .side-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: var(--sprint-text-primary) !important;
+  border-color: var(--sprint-text-muted) !important;
+}
+[data-theme='light'] .sprint-backlog-view .side-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Progress bar alignment */
+.sprint-backlog-view .progress-bar-bg {
+  background-color: var(--sprint-border) !important;
+}
+
+/* Dropdown sprint menu hover effect */
+.sprint-menu-item:hover {
+  background-color: var(--sprint-input-bg) !important;
+  color: var(--sprint-text-primary) !important;
+}
+.sprint-menu-item.danger:hover {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+}
+
+/* Bottom dock variables overrides for dark/light themes */
+:root {
+  --dock-bg: rgba(23, 27, 36, 0.95);
+  --dock-border: #374151;
+  --dock-text: rgba(248, 250, 252, 0.65);
+  --dock-text-hover: #f8fafc;
+  --dock-bg-hover: rgba(255, 255, 255, 0.08);
+  --dock-bg-active: #2563eb;
+}
+
+[data-theme='light'] {
+  --dock-bg: rgba(255, 255, 255, 0.92);
+  --dock-border: #cbd5e1;
+  --dock-text: #475569;
+  --dock-text-hover: #1e293b;
+  --dock-bg-hover: rgba(79, 70, 229, 0.08);
+  --dock-bg-active: rgba(79, 70, 229, 0.1);
+}
+
+.bottom-dock {
+  background: var(--dock-bg) !important;
+  border: 1px solid var(--dock-border) !important;
+}
+.dock-item {
+  color: var(--dock-text) !important;
+}
+.dock-item:hover {
+  color: var(--dock-text-hover) !important;
+  background: var(--dock-bg-hover) !important;
+}
+.dock-item.active {
+  background: var(--dock-bg-active) !important;
+  color: var(--dock-text-hover) !important;
+}
+[data-theme='light'] .dock-item.active {
+  color: #4f46e5 !important;
+}
+
 
 
 
