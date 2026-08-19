@@ -221,10 +221,10 @@ export default function CardModal({
     const currentSubtasks = freshCard.subtasks || [];
 
     const totalTasks = currentChecklist.length;
-    const completedTasks = currentChecklist.filter((item) => item.completed).length;
+    const completedTasks = currentChecklist.filter((item) => item.completed === true || item.completed === 'true').length;
 
     const totalSubs = currentSubtasks.length;
-    const completedSubs = currentSubtasks.filter((sub) => sub.status === 'done').length;
+    const completedSubs = currentSubtasks.filter((sub) => sub.status?.toLowerCase() === 'done').length;
 
     const hasTasks = totalTasks > 0;
     const tasksComplete = hasTasks && (completedTasks === totalTasks);
