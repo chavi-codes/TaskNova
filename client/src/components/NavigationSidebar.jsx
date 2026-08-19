@@ -1,27 +1,23 @@
 import React from 'react';
-import { Inbox, Layout, Trophy, Calendar, Layers, ChevronLeft, ChevronRight, Settings } from 'lucide-react';
+import { Inbox, Layout, Trophy, Calendar, Layers, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function NavigationSidebar({
   activeView,
   setActiveView,
-  isInboxOpen,
-  setIsInboxOpen,
   isNavExpanded,
   setIsNavExpanded,
   isMobileNavOpen,
   setIsMobileNavOpen,
-  onSwitchBoards,
-  autoMoveSetting,
-  setAutoMoveSetting
+  onSwitchBoards
 }) {
   const navItems = [
     {
       id: 'inbox',
       label: 'Inbox',
       icon: <Inbox size={18} />,
-      isActive: isInboxOpen,
+      isActive: activeView === 'inbox',
       onClick: () => {
-        setIsInboxOpen(!isInboxOpen);
+        setActiveView('inbox');
         if (window.innerWidth <= 768) setIsMobileNavOpen(false);
       }
     },
@@ -104,17 +100,6 @@ export default function NavigationSidebar({
 
         {/* Footer actions */}
         <div className="nav-footer">
-          {/* Settings button */}
-          <button 
-            className="nav-item settings-toggle-btn"
-            onClick={() => setAutoMoveSetting(!autoMoveSetting)}
-            title=""
-          >
-            <span className="nav-item-icon"><Settings size={18} /></span>
-            {isNavExpanded && <span className="nav-item-label">Auto-move Done</span>}
-            {!isNavExpanded && <span className="custom-tooltip">Toggle Auto-move</span>}
-          </button>
-
           {/* Expand/Collapse Toggle */}
           <button
             className="nav-collapse-btn"

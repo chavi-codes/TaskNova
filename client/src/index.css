@@ -3207,6 +3207,135 @@ body {
   }
 }
 
+/* Inbox View page styling */
+.inbox-view-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background-color: var(--sprint-page-bg);
+  overflow-y: auto;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.inbox-view-header {
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--sprint-border);
+  padding-bottom: 16px;
+}
+
+.inbox-view-title-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--sprint-text-primary);
+}
+
+.inbox-view-title-box h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.inbox-view-icon {
+  color: var(--ln-primary);
+}
+
+.inbox-view-subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--sprint-text-secondary);
+}
+
+.inbox-view-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inbox-add-section {
+  max-width: 500px;
+}
+
+.inbox-card-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: var(--sprint-container-bg);
+  border: 1px dashed var(--sprint-border);
+  color: var(--sprint-text-secondary);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.inbox-card-add-btn:hover {
+  background-color: var(--sprint-input-bg);
+  color: var(--sprint-text-primary);
+  border-color: var(--sprint-text-muted);
+}
+
+.inbox-add-form {
+  background-color: var(--sprint-container-bg);
+  border: 1px solid var(--sprint-border);
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.inbox-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  padding-bottom: 80px;
+}
+
+.inbox-empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background-color: var(--sprint-container-bg);
+  border: 1px dashed var(--sprint-border);
+  border-radius: 12px;
+  color: var(--sprint-text-secondary);
+}
+
+.inbox-empty-icon {
+  margin-bottom: 12px;
+  color: var(--sprint-text-muted);
+}
+
+.inbox-empty-state p {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: var(--sprint-text-primary);
+}
+
+.inbox-empty-state span {
+  font-size: 13px;
+}
+
+.card-description-preview {
+  font-size: 12px;
+  color: var(--sprint-text-secondary);
+  background-color: var(--sprint-input-bg);
+  border: 1px solid var(--sprint-border);
+  padding: 6px 8px;
+  border-radius: 4px;
+  margin: 8px 0;
+  line-height: 1.4;
+}
+
 
 
 

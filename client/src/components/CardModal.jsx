@@ -85,8 +85,6 @@ export default function CardModal({
   const [comments, setComments] = useState(card.comments || []);
 
   const [targetListId, setTargetListId] = useState(listId);
-  const [showMoveConfirm, setShowMoveConfirm] = useState(false);
-  const [pendingChecklist, setPendingChecklist] = useState(null);
 
   const [subtasks, setSubtasks] = useState(card.subtasks || []);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
@@ -221,93 +219,16 @@ export default function CardModal({
 
     setChecklist(updated);
 
-    const isNowAllCompleted =
-      updated.length > 0 &&
-      updated.every((item) => item.completed);
-
-    const wasAllCompletedBefore =
-      checklist.length > 0 &&
-      checklist.every((item) => item.completed);
-
-    if (isNowAllCompleted && !wasAllCompletedBefore) {
-      const currentList = lists.find((l) => l.id === listId);
-      const isDoneList =
-        currentList?.title?.toLowerCase() === 'done';
-
-      if (!isDoneList) {
-        const doneList = lists.find(
-          (l) => l.title?.toLowerCase() === 'done'
-        );
-
-        if (doneList) {
-          if (autoMoveSetting) {
-            await onUpdateCard(card.id, {
-              title,
-              description,
-              dueDate,
-              checklist: updated,
-              labels,
-              comments,
-              subtasks,
-              typeOfWork
-            });
-
-            await onMoveCard(
-              card.id,
-              listId,
-              doneList.id
-            );
-
-            onClose();
-          } else {
-            setPendingChecklist(updated);
-            setShowMoveConfirm(true);
-          }
-        }
-      }
-    }
-  };  const handleConfirmMove = async () => {
-    const doneList = lists.find(
-      (l) => l.title?.toLowerCase() === 'done'
-    );
-
-    if (doneList) {
-      await onUpdateCard(card.id, {
-        title,
-        description,
-        dueDate,
-        checklist: pendingChecklist || checklist,
-        labels,
-        comments,
-        subtasks,
-        typeOfWork
-      });
-
-      await onMoveCard(card.id, listId, doneList.id);
-      onClose();
-    }
-
-    setShowMoveConfirm(false);
-    setPendingChecklist(null);
-  };
-
-  const handleCancelMove = () => {
-    const updatedChecklist =
-      pendingChecklist || checklist;
-
     onUpdateCard(card.id, {
       title,
       description,
       dueDate,
-      checklist: updatedChecklist,
+      checklist: updated,
       labels,
       comments,
       subtasks,
       typeOfWork
     });
-
-    setShowMoveConfirm(false);
-    setPendingChecklist(null);
   };
 
   // ------------------------------------------------------------
@@ -1772,109 +1693,6 @@ export default function CardModal({
                 </div>
               )
             )}
-          </div>
-        </div>
-      )}
-
-      {/* =========================================================
-          CHECKLIST MOVE CONFIRMATION
-      ========================================================== */}
-      {showMoveConfirm && (
-        <div
-          className="confirm-overlay"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor:
-              'rgba(15, 23, 42, 0.85)',
-            zIndex: 3000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backdropFilter: 'blur(6px)'
-          }}
-        >
-          <div
-            className="confirm-dialog"
-            style={{
-              backgroundColor: '#1e293b',
-              border:
-                '1px solid #334155',
-              borderRadius: '12px',
-              padding: '28px',
-              width: '340px',
-              textAlign: 'center',
-              boxShadow:
-                '0 20px 25px -5px rgba(0,0,0,.5)'
-            }}
-          >
-            <h3
-              style={{
-                color: '#ffffff',
-                marginBottom: '10px',
-                fontSize: '18px'
-              }}
-            >
-              Checklist completed!
-            </h3>
-
-            <p
-              style={{
-                color: '#94a3b8',
-                marginBottom: '24px',
-                fontSize: '14px'
-              }}
-            >
-              Move this task to Done?
-            </p>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: '12px',
-                justifyContent:
-                  'center'
-              }}
-            >
-              <button
-                onClick={
-                  handleConfirmMove
-                }
-                style={{
-                  backgroundColor:
-                    '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 18px',
-                  borderRadius: '6px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
-                Move
-              </button>
-
-              <button
-                onClick={
-                  handleCancelMove
-                }
-                style={{
-                  backgroundColor:
-                    '#334155',
-                  color: '#cbd5e1',
-                  border: 'none',
-                  padding: '8px 18px',
-                  borderRadius: '6px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
-                Keep Here
-              </button>
-            </div>
           </div>
         </div>
       )}
