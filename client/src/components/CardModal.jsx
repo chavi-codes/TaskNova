@@ -210,6 +210,68 @@ export default function CardModal({
     setNewChecklistItem('');
   };
 
+  const evaluateWorkflowMove = async (freshCard) => {
+    if (!freshCard) {
+      console.log('[AutoMove] No fresh card returned from update');
+      return;
+    }
+
+    const currentChecklist = freshCard.checklist || [];
+    const currentSubtasks = freshCard.subtasks || [];
+
+    const totalTasks = currentChecklist.length;
+    const completedTasks = currentChecklist.filter((item) => item.completed).length;
+
+    const totalSubs = currentSubtasks.length;
+    const completedSubs = currentSubtasks.filter((sub) => sub.status === 'done').length;
+
+    const hasTasks = totalTasks > 0;
+    const tasksComplete = hasTasks && (completedTasks === totalTasks);
+
+    const hasSubtasks = totalSubs > 0;
+    const subtasksComplete = hasSubtasks && (completedSubs === totalSubs);
+
+    const doneList = lists.find((l) => l.title?.toLowerCase() === 'done');
+    const doneListId = doneList ? doneList.id : 'NOT_FOUND';
+
+    console.log('[AutoMove] Evaluation for Card ID:', freshCard.id);
+    console.log('[AutoMove] Current List ID:', listId, 'Done List ID:', doneListId);
+    console.log('[AutoMove] Associated Tasks count:', completedTasks, '/', totalTasks, 'Complete:', tasksComplete);
+    console.log('[AutoMove] Subtasks count:', completedSubs, '/', totalSubs, 'Complete:', subtasksComplete);
+
+    if (!doneList) {
+      console.log('[AutoMove] Done column not found on the board.');
+      return;
+    }
+
+    if (listId === doneList.id) {
+      console.log('[AutoMove] Card is already in Done column. Skipping move.');
+      return;
+    }
+
+    let shouldMove = false;
+    if (hasTasks && hasSubtasks) {
+      shouldMove = tasksComplete && subtasksComplete;
+      console.log('[AutoMove] Both tasks and subtasks present. shouldMove =', shouldMove);
+    } else if (hasTasks) {
+      shouldMove = tasksComplete;
+      console.log('[AutoMove] Only tasks present. shouldMove =', shouldMove);
+    } else if (hasSubtasks) {
+      shouldMove = subtasksComplete;
+      console.log('[AutoMove] Only subtasks present. shouldMove =', shouldMove);
+    } else {
+      console.log('[AutoMove] Neither tasks nor subtasks present. shouldMove = false');
+    }
+
+    if (shouldMove) {
+      console.log('[AutoMove] Condition met! Moving card to Done...');
+      await onMoveCard(freshCard.id, listId, doneList.id);
+      console.log('[AutoMove] onMoveCard API completed successfully.');
+    } else {
+      console.log('[AutoMove] Condition not met. Card remains in current list.');
+    }
+  };
+
   const toggleChecklist = async (id) => {
     const updated = checklist.map((item) =>
       item.id === id
@@ -219,7 +281,7 @@ export default function CardModal({
 
     setChecklist(updated);
 
-    onUpdateCard(card.id, {
+    const freshCard = await onUpdateCard(card.id, {
       title,
       description,
       dueDate,
@@ -229,6 +291,8 @@ export default function CardModal({
       subtasks,
       typeOfWork
     });
+
+    await evaluateWorkflowMove(freshCard);
   };
 
   // ------------------------------------------------------------
@@ -317,13 +381,13 @@ export default function CardModal({
     });
   };
 
-  const handleUpdateSubtaskStatus = (id, newStatus) => {
+  const handleUpdateSubtaskStatus = async (id, newStatus) => {
     const updated = subtasks.map((sub) =>
       sub.id === id ? { ...sub, status: newStatus } : sub
     );
     setSubtasks(updated);
 
-    onUpdateCard(card.id, {
+    const freshCard = await onUpdateCard(card.id, {
       title,
       description,
       dueDate,
@@ -333,6 +397,8 @@ export default function CardModal({
       subtasks: updated,
       typeOfWork
     });
+
+    await evaluateWorkflowMove(freshCard);
   };
 
   const handleToggleSubtaskCheckbox = (sub) => {
@@ -340,11 +406,11 @@ export default function CardModal({
     handleUpdateSubtaskStatus(sub.id, newStatus);
   };
 
-  const handleDeleteSubtask = (id) => {
+  const handleDeleteSubtask = async (id) => {
     const updated = subtasks.filter((sub) => sub.id !== id);
     setSubtasks(updated);
 
-    onUpdateCard(card.id, {
+    const freshCard = await onUpdateCard(card.id, {
       title,
       description,
       dueDate,
@@ -354,6 +420,8 @@ export default function CardModal({
       subtasks: updated,
       typeOfWork
     });
+
+    await evaluateWorkflowMove(freshCard);
   };
 
   const handleStartEditSubtask = (sub) => {

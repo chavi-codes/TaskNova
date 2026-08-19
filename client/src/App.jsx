@@ -152,10 +152,12 @@ export default function App() {
         }));
         // Update activeCard to stay in sync with the backend response
         setActiveCard((prev) => (prev && prev.id === cardId ? updatedCard : prev));
+        return updatedCard;
       }
     } catch (err) {
       console.error('Error updating card:', err);
     }
+    return null;
   };
 
   // Delete Card
