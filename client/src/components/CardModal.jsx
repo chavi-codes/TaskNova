@@ -61,6 +61,7 @@ export default function CardModal({
   const [description, setDescription] = useState(card.description || '');
   const [dueDate, setDueDate] = useState(card.dueDate || '');
   const [typeOfWork, setTypeOfWork] = useState(card.typeOfWork || 'task');
+  const [completed, setCompleted] = useState(card.completed || false);
 
   const [newChecklistItem, setNewChecklistItem] = useState('');
   const [checklist, setChecklist] = useState(card.checklist || []);
@@ -119,6 +120,7 @@ export default function CardModal({
       setActiveDescChecklistId(null);
       setActiveDescSubtaskId(null);
       setEditingDescText('');
+      setCompleted(card.completed || false);
       evaluateWorkflowMove(card);
     } else {
       // Same card updated: sync states if they have not been edited locally (keeps user inputs safe)
@@ -134,6 +136,7 @@ export default function CardModal({
       if (card.labels !== prevCard.labels) setLabels(card.labels || []);
       if (card.comments !== prevCard.comments) setComments(card.comments || []);
       if (card.subtasks !== prevCard.subtasks) setSubtasks(card.subtasks || []);
+      if (card.completed !== prevCard.completed) setCompleted(card.completed || false);
     }
     prevCardRef.current = card;
   }, [card, listId]);
@@ -183,7 +186,9 @@ export default function CardModal({
       labels,
       comments,
       subtasks,
-      typeOfWork
+      typeOfWork,
+      completed,
+      previousListId: card.previousListId
     });
 
     if (targetListId !== listId) {
@@ -273,10 +278,134 @@ export default function CardModal({
 
     if (shouldMove) {
       console.log('[AutoMove] Condition met! Moving card to Done...');
+      setCompleted(true);
+      await onUpdateCard(freshCard.id, {
+        title,
+        description,
+        dueDate,
+        checklist: currentChecklist,
+        labels,
+        comments,
+        subtasks: currentSubtasks,
+        typeOfWork,
+        completed: true,
+        status: 'done',
+        listId: doneList.id,
+        previousListId: currentListId
+      });
       await onMoveCard(freshCard.id, currentListId, doneList.id);
       console.log('[AutoMove] onMoveCard API completed successfully.');
     } else {
+      // If no longer complete, update completed to false but do not move it back out of Done
+      if (completed && !tasksComplete && !subtasksComplete) {
+        setCompleted(false);
+        await onUpdateCard(freshCard.id, {
+          title,
+          description,
+          dueDate,
+          checklist: currentChecklist,
+          labels,
+          comments,
+          subtasks: currentSubtasks,
+          typeOfWork,
+          completed: false
+        });
+      }
       console.log('[AutoMove] Condition not met. Card remains in current list.');
+    }
+  };
+
+  const handleTaskCompletion = async (checked) => {
+    // Prevent duplicate triggers if already in that state
+    if (completed === checked) return;
+
+    // Save previous state to revert in case of API failure
+    const prevCompleted = completed;
+    const prevChecklist = [...checklist];
+    const prevSubtasks = [...subtasks];
+
+    // Local UI update first for smooth transition
+    setCompleted(checked);
+    
+    let updatedChecklist = [...checklist];
+    let updatedSubtasks = [...subtasks];
+
+    if (checked) {
+      // Mark all associated items completed
+      updatedChecklist = checklist.map(item => ({ ...item, completed: true }));
+      updatedSubtasks = subtasks.map(sub => ({ ...sub, status: 'done' }));
+      setChecklist(updatedChecklist);
+      setSubtasks(updatedSubtasks);
+    }
+
+    try {
+      const doneList = lists.find((l) => l.title?.toLowerCase() === 'done');
+      
+      // Determine the card's active column list ID
+      const parentList = lists.find((l) => l.cards.some((c) => c.id === card.id));
+      const currentListId = parentList ? parentList.id : listId;
+
+      let targetListId = currentListId;
+      let previousListId = card.previousListId || null;
+
+      if (checked) {
+        if (autoMoveSetting && doneList) {
+          if (currentListId !== doneList.id) {
+            targetListId = doneList.id;
+            previousListId = currentListId; // Store previous list ID
+          }
+        }
+      } else {
+        // Unchecked: restore to previousListId
+        if (autoMoveSetting && doneList && currentListId === doneList.id) {
+          const targetRestoreList = lists.find(l => l.id === card.previousListId) || 
+                                    lists.find(l => l.id !== doneList.id && !l.isInbox) ||
+                                    lists[0];
+          if (targetRestoreList) {
+            targetListId = targetRestoreList.id;
+            previousListId = null; // Clear it
+          }
+        }
+      }
+
+      console.log('[TaskCompletion] Checked:', checked);
+      console.log('[TaskCompletion] currentListId:', currentListId, 'targetListId:', targetListId);
+      console.log('[TaskCompletion] previousListId:', previousListId);
+
+      // Perform card update first
+      const updates = {
+        title,
+        description,
+        dueDate,
+        checklist: updatedChecklist,
+        labels,
+        comments,
+        subtasks: updatedSubtasks,
+        typeOfWork,
+        completed: checked,
+        status: checked ? 'done' : (lists.find(l => l.id === targetListId)?.title || 'todo'),
+        listId: targetListId,
+        previousListId: previousListId
+      };
+
+      const freshCard = await onUpdateCard(card.id, updates);
+
+      if (!freshCard) {
+        throw new Error('Failed to update card status in database');
+      }
+
+      // If column changes, perform moveCard
+      if (currentListId !== targetListId) {
+        await onMoveCard(card.id, currentListId, targetListId);
+      }
+
+    } catch (error) {
+      console.error('[TaskCompletion] API failure:', error);
+      // Revert local UI state
+      setCompleted(prevCompleted);
+      setChecklist(prevChecklist);
+      setSubtasks(prevSubtasks);
+      alert('Failed to update task completion. Please try again.');
     }
   };
 
@@ -723,14 +852,43 @@ export default function CardModal({
       >
         {/* HEADER */}
         <div className="modal-header">
-          <input
-            type="text"
-            className="modal-title-input"
-            value={title}
-            onChange={(e) =>
-              setTitle(e.target.value)
-            }
-          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, marginRight: '16px' }}>
+            <input
+              type="text"
+              className="modal-title-input"
+              value={title}
+              onChange={(e) =>
+                setTitle(e.target.value)
+              }
+            />
+            {/* Complete Task checkbox */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: completed ? '#10b981' : 'var(--text-secondary)',
+                userSelect: 'none',
+                transition: 'color 0.2s ease'
+              }} className="complete-task-label">
+                <input
+                  type="checkbox"
+                  checked={completed}
+                  onChange={(e) => handleTaskCompletion(e.target.checked)}
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    cursor: 'pointer',
+                    accentColor: '#10b981'
+                  }}
+                />
+                <span>{completed ? '✓ Complete Task' : '☐ Complete Task'}</span>
+              </label>
+            </div>
+          </div>
 
           <button
             className="modal-close-btn"
