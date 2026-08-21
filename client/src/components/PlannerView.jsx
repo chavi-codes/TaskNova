@@ -1,7 +1,7 @@
 import React from 'react';
 import { Calendar, Clock, ListTodo } from 'lucide-react';
 
-export default function PlannerView({ lists, onCardClick, onCardCompletionDirect }) {
+export default function PlannerView({ lists, onCardClick }) {
   // Aggregate all cards with due dates
   const allCards = lists.flatMap((l) =>
     l.cards.map((c) => ({ ...c, listTitle: l.title, listId: l.id }))
@@ -45,31 +45,6 @@ export default function PlannerView({ lists, onCardClick, onCardCompletionDirect
                 >
                   <div>
                     <div className="card-title">{card.title}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '6px', marginBottom: '6px' }} onClick={(e) => e.stopPropagation()}>
-                      <label style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        cursor: 'pointer',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        color: card.completed ? '#10b981' : '#94a3b8',
-                        userSelect: 'none'
-                      }}>
-                        <input
-                          type="checkbox"
-                          checked={card.completed || false}
-                          onChange={(e) => onCardCompletionDirect(card, card.listId, e.target.checked)}
-                          style={{
-                            width: '13px',
-                            height: '13px',
-                            cursor: 'pointer',
-                            accentColor: '#10b981'
-                          }}
-                        />
-                        <span>{card.completed ? '✓ Complete Task' : '☐ Complete Task'}</span>
-                      </label>
-                    </div>
                     <div className="planner-card-meta">
                       In List: <strong className="planner-card-list">{card.listTitle}</strong>
                     </div>
@@ -105,31 +80,6 @@ export default function PlannerView({ lists, onCardClick, onCardCompletionDirect
                 >
                   <div>
                     <div className="card-title">{card.title}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '6px', marginBottom: '6px' }} onClick={(e) => e.stopPropagation()}>
-                      <label style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        cursor: 'pointer',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        color: card.completed ? '#10b981' : '#94a3b8',
-                        userSelect: 'none'
-                      }}>
-                        <input
-                          type="checkbox"
-                          checked={card.completed || false}
-                          onChange={(e) => onCardCompletionDirect(card, card.listId, e.target.checked)}
-                          style={{
-                            width: '13px',
-                            height: '13px',
-                            cursor: 'pointer',
-                            accentColor: '#10b981'
-                          }}
-                        />
-                        <span>{card.completed ? '✓ Complete Task' : '☐ Complete Task'}</span>
-                      </label>
-                    </div>
                     <div className="planner-card-meta">
                       In List: <strong className="planner-card-list">{card.listTitle}</strong>
                     </div>

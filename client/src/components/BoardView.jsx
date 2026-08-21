@@ -21,7 +21,7 @@ const COLOR_PRESETS = [
   '#831843'  // Deep Rose
 ];
 
-export default function BoardView({ lists, searchQuery, onCardClick, onAddCard, onAddList, onDeleteList, onMoveCard, onCardCompletionDirect }) {
+export default function BoardView({ lists, searchQuery, onCardClick, onAddCard, onAddList, onDeleteList, onMoveCard }) {
   const [newListTitle, setNewListTitle] = useState('');
   const [isAddingList, setIsAddingList] = useState(false);
   const [addingCardToListId, setAddingCardToListId] = useState(null);
@@ -158,32 +158,6 @@ export default function BoardView({ lists, searchQuery, onCardClick, onAddCard, 
                       )}
 
                       <div className="card-title">{card.title}</div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', marginTop: '6px', marginBottom: '6px' }} onClick={(e) => e.stopPropagation()}>
-                        <label style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          cursor: 'pointer',
-                          fontSize: '11px',
-                          fontWeight: '600',
-                          color: card.completed ? '#10b981' : '#94a3b8',
-                          userSelect: 'none'
-                        }}>
-                          <input
-                            type="checkbox"
-                            checked={card.completed || false}
-                            onChange={(e) => onCardCompletionDirect(card, list.id, e.target.checked)}
-                            style={{
-                              width: '13px',
-                              height: '13px',
-                              cursor: 'pointer',
-                              accentColor: '#10b981'
-                            }}
-                          />
-                          <span>{card.completed ? '✓ Complete Task' : '☐ Complete Task'}</span>
-                        </label>
-                      </div>
 
                       {card.description && (
                         <div style={{ fontSize: '11px', color: '#94a3b8' }}>

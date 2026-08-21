@@ -27,13 +27,6 @@ export default function App() {
 
   const [authModal, setAuthModal] = useState(null); // null | 'login' | 'signup'
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [autoMoveSetting, setAutoMoveSetting] = useState(() => {
-    return localStorage.getItem('tasknova_auto_move') !== 'false';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('tasknova_auto_move', autoMoveSetting);
-  }, [autoMoveSetting]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -210,62 +203,6 @@ export default function App() {
     }
   };
 
-  const handleCardCompletionDirect = async (cardObj, currentListId, checked) => {
-    let updatedChecklist = cardObj.checklist || [];
-    let updatedSubtasks = cardObj.subtasks || [];
-
-    if (checked) {
-      updatedChecklist = (cardObj.checklist || []).map(item => ({ ...item, completed: true }));
-      updatedSubtasks = (cardObj.subtasks || []).map(sub => ({ ...sub, status: 'done' }));
-    }
-
-    const doneList = board.lists.find((l) => l.title?.toLowerCase() === 'done');
-    let targetListId = currentListId;
-    let previousListId = cardObj.previousListId || null;
-
-    if (checked) {
-      if (autoMoveSetting && doneList) {
-        if (currentListId !== doneList.id) {
-          targetListId = doneList.id;
-          previousListId = currentListId;
-        }
-      }
-    } else {
-      if (autoMoveSetting && doneList && currentListId === doneList.id) {
-        const targetRestoreList = board.lists.find(l => l.id === cardObj.previousListId) || 
-                                  board.lists.find(l => l.id !== doneList.id && !l.isInbox) ||
-                                  board.lists[0];
-        if (targetRestoreList) {
-          targetListId = targetRestoreList.id;
-          previousListId = null;
-        }
-      }
-    }
-
-    try {
-      const updates = {
-        ...cardObj,
-        checklist: updatedChecklist,
-        subtasks: updatedSubtasks,
-        completed: checked,
-        status: checked ? 'done' : (board.lists.find(l => l.id === targetListId)?.title || 'todo'),
-        listId: targetListId,
-        previousListId: previousListId
-      };
-
-      // Perform card update first
-      await handleUpdateCard(cardObj.id, updates);
-
-      // If column changes, perform moveCard
-      if (currentListId !== targetListId) {
-        await handleMoveCard(cardObj.id, currentListId, targetListId);
-      }
-    } catch (error) {
-      console.error('[DirectTaskCompletion] API failure:', error);
-      alert('Failed to update task completion. Please try again.');
-    }
-  };
-
   const handleUpdateBoard = async (newBoardData) => {
     try {
       const res = await fetch('/api/board', {
@@ -321,29 +258,6 @@ export default function App() {
             <div className="board-bar">
               <div className="board-title">
                 <span>{board.title}</span>
-              </div>
-              <div className="board-bar-actions">
-                <label className="toggle-setting-label" style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  color: '#b6c2cf',
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  userSelect: 'none',
-                  border: '1px solid rgba(255, 255, 255, 0.08)'
-                }}>
-                  <input
-                    type="checkbox"
-                    checked={autoMoveSetting}
-                    onChange={(e) => setAutoMoveSetting(e.target.checked)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                  <span>Auto-move completed tasks to Done</span>
-                </label>
               </div>
             </div>
 
@@ -406,7 +320,6 @@ export default function App() {
                 onUpdateCard={handleUpdateCard}
                 onDeleteCard={handleDeleteCard}
                 onMoveCard={handleMoveCard}
-                autoMoveSetting={autoMoveSetting}
               />
             )}
 

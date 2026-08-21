@@ -35,8 +35,7 @@ export default function SprintBacklogView({
   onCardClick,
   onUpdateCard,
   onMoveCard,
-  onUpdateBoard,
-  onCardCompletionDirect
+  onUpdateBoard
 }) {
   const [expandedCardId, setExpandedCardId] = useState(null);
   const [editingCardId, setEditingCardId] = useState(null);
@@ -731,21 +730,6 @@ export default function SprintBacklogView({
             </span>
 
 
-
-            {/* Complete Task Checkbox */}
-            <div style={{ display: 'flex', alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
-              <input
-                type="checkbox"
-                checked={card.completed || false}
-                onChange={(e) => onCardCompletionDirect(card, card.listId, e.target.checked)}
-                style={{
-                  width: '14px',
-                  height: '14px',
-                  cursor: 'pointer',
-                  accentColor: '#10b981'
-                }}
-              />
-            </div>
 
             {/* Title */}
             <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--ln-text)' }}>
