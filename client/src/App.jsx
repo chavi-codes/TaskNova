@@ -147,6 +147,16 @@ export default function App() {
 
   // Update Card
   const handleUpdateCard = async (cardId, updates) => {
+    // 1. Optimistic UI update: merge updates synchronously
+    setBoard((prev) => ({
+      ...prev,
+      lists: prev.lists.map((l) => ({
+        ...l,
+        cards: l.cards.map((c) => (c.id === cardId ? { ...c, ...updates } : c))
+      }))
+    }));
+    setActiveCard((prev) => (prev && prev.id === cardId ? { ...prev, ...updates } : prev));
+
     try {
       const res = await fetch(`/api/cards/${cardId}`, {
         method: 'PUT',
@@ -155,6 +165,7 @@ export default function App() {
       });
       if (res.ok) {
         const updatedCard = await res.json();
+        // 2. Final Sync with backend response
         setBoard((prev) => ({
           ...prev,
           lists: prev.lists.map((l) => ({
@@ -162,7 +173,6 @@ export default function App() {
             cards: l.cards.map((c) => (c.id === cardId ? updatedCard : c))
           }))
         }));
-        // Update activeCard to stay in sync with the backend response
         setActiveCard((prev) => (prev && prev.id === cardId ? updatedCard : prev));
         return updatedCard;
       }
@@ -192,6 +202,36 @@ export default function App() {
 
   // Move Card between lists
   const handleMoveCard = async (cardId, sourceListId, targetListId) => {
+    // 1. Optimistic UI update: move card locally in state immediately
+    let cardToMove = null;
+    setBoard((prev) => {
+      const sourceList = prev.lists.find((l) => l.id === sourceListId);
+      if (!sourceList) return prev;
+      cardToMove = sourceList.cards.find((c) => c.id === cardId);
+      if (!cardToMove) return prev;
+
+      return {
+        ...prev,
+        lists: prev.lists.map((l) => {
+          if (l.id === sourceListId) {
+            return { ...l, cards: l.cards.filter((c) => c.id !== cardId) };
+          }
+          if (l.id === targetListId) {
+            const exists = l.cards.some((c) => c.id === cardId);
+            return { ...l, cards: exists ? l.cards : [...l.cards, cardToMove] };
+          }
+          return l;
+        })
+      };
+    });
+
+    if (activeCard && activeCard.id === cardId) {
+      setActiveCardListId(targetListId);
+      if (cardToMove) {
+        setActiveCard(cardToMove);
+      }
+    }
+
     try {
       const res = await fetch('/api/cards/move', {
         method: 'POST',
@@ -200,6 +240,7 @@ export default function App() {
       });
       if (res.ok) {
         const data = await res.json();
+        // 2. Final Sync with backend response
         setBoard(data.board);
         if (activeCard && activeCard.id === cardId) {
           setActiveCardListId(targetListId);

@@ -300,6 +300,48 @@ export default function CardModal({
 
     setChecklist(updated);
 
+    const totalItems = updated.length;
+    const completedItems = updated.filter(
+      (item) => item.completed === true || item.completed === 'true'
+    ).length;
+
+    const is100Percent = totalItems > 0 && completedItems === totalItems;
+
+    const doneList = lists.find((l) => l.title?.toLowerCase() === 'done');
+    const doneListId = doneList ? doneList.id : 'NOT_FOUND';
+
+    let currentListId = listId;
+    const parentList = lists.find((l) => l.cards.some((c) => c.id === card.id));
+    if (parentList) {
+      currentListId = parentList.id;
+    }
+
+    const isInDone = currentListId === doneListId;
+
+    let targetMoveListId = null;
+    let autoMovedToDoneVal = card.autoMovedToDone;
+    let previousListIdVal = card.previousListId;
+    let completedVal = card.completed;
+    let statusVal = card.status;
+
+    if (is100Percent) {
+      if (!isInDone && (autoMoveSetting === true || autoMoveSetting === 'true') && doneList) {
+        completedVal = true;
+        statusVal = 'done';
+        previousListIdVal = currentListId;
+        autoMovedToDoneVal = true;
+        targetMoveListId = doneList.id;
+      }
+    } else {
+      if (isInDone && card.autoMovedToDone && card.previousListId) {
+        completedVal = false;
+        statusVal = 'todo';
+        previousListIdVal = null;
+        autoMovedToDoneVal = false;
+        targetMoveListId = card.previousListId;
+      }
+    }
+
     const freshCard = await onUpdateCard(card.id, {
       title,
       description,
@@ -309,11 +351,15 @@ export default function CardModal({
       comments,
       subtasks,
       typeOfWork,
-      previousListId: card.previousListId,
-      autoMovedToDone: card.autoMovedToDone
+      completed: completedVal,
+      status: statusVal,
+      previousListId: previousListIdVal,
+      autoMovedToDone: autoMovedToDoneVal
     });
 
-    await evaluateWorkflowMove(freshCard, updated);
+    if (targetMoveListId) {
+      await onMoveCard(card.id, currentListId, targetMoveListId);
+    }
   };
 
   // ------------------------------------------------------------

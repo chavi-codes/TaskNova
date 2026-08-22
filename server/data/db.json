@@ -130,42 +130,6 @@
             "isInbox": false,
             "cards": [
               {
-                "id": "card-4a6bb0bac06c",
-                "title": "Light Theme",
-                "description": "",
-                "labels": [],
-                "dueDate": "2026-08-19",
-                "checklist": [
-                  {
-                    "id": "chk-1786024778981",
-                    "text": "fixing text color and background color",
-                    "completed": true
-                  },
-                  {
-                    "id": "chk-1786024817677",
-                    "text": "fix layout",
-                    "completed": true
-                  },
-                  {
-                    "id": "chk-1786024828878",
-                    "text": "fix card color",
-                    "completed": true
-                  }
-                ],
-                "cover": "",
-                "members": [
-                  "R"
-                ],
-                "comments": [],
-                "subtasks": [],
-                "typeOfWork": "bug",
-                "completed": true,
-                "status": "done",
-                "listId": "list-done-1785761751598-4",
-                "previousListId": "list-in-progress-1785761751598-2",
-                "autoMovedToDone": true
-              },
-              {
                 "id": "card-61edcd4a1ae5",
                 "title": "My TaskNova",
                 "description": "",
@@ -206,7 +170,13 @@
                   "R"
                 ],
                 "comments": [],
-                "subtasks": [],
+                "subtasks": [
+                  {
+                    "id": "sub-1787387335073",
+                    "title": "auto done",
+                    "status": "done"
+                  }
+                ],
                 "typeOfWork": "task",
                 "completed": true,
                 "status": "done",
@@ -221,6 +191,13 @@
             "title": "Testing",
             "color": "#3f2d1d",
             "isInbox": false,
+            "cards": []
+          },
+          {
+            "id": "list-done-1785761751598-4",
+            "title": "Done",
+            "color": "#064e3b",
+            "isInbox": false,
             "cards": [
               {
                 "id": "card-1787206464374",
@@ -228,19 +205,170 @@
                 "description": "sprint check\n",
                 "labels": [],
                 "dueDate": "",
-                "checklist": [],
+                "checklist": [
+                  {
+                    "id": "chk-1787387364655",
+                    "text": "done",
+                    "completed": true,
+                    "description": "done  the task"
+                  },
+                  {
+                    "id": "chk-1787387371627",
+                    "text": "check",
+                    "completed": true
+                  }
+                ],
                 "comments": [],
                 "subtasks": [],
-                "typeOfWork": "bug",
+                "typeOfWork": "subtask",
                 "sprintId": "sprint-1787206452622",
-                "completed": false
+                "completed": false,
+                "status": "todo",
+                "previousListId": null,
+                "autoMovedToDone": false
+              },
+              {
+                "id": "card-4a6bb0bac06c",
+                "title": "Light Theme",
+                "description": "",
+                "labels": [],
+                "dueDate": "2026-08-19",
+                "checklist": [
+                  {
+                    "id": "chk-1786024778981",
+                    "text": "fixing text color and background color",
+                    "completed": true
+                  },
+                  {
+                    "id": "chk-1786024817677",
+                    "text": "fix layout",
+                    "completed": true
+                  },
+                  {
+                    "id": "chk-1786024828878",
+                    "text": "fix card color",
+                    "completed": true
+                  }
+                ],
+                "cover": "",
+                "members": [
+                  "R"
+                ],
+                "comments": [],
+                "subtasks": [
+                  {
+                    "id": "sub-1787387645004",
+                    "title": "done",
+                    "status": "done"
+                  },
+                  {
+                    "id": "sub-1787387654300",
+                    "title": "not done",
+                    "status": "done"
+                  }
+                ],
+                "typeOfWork": "bug",
+                "completed": true,
+                "status": "done",
+                "listId": "list-done-1785761751598-4",
+                "previousListId": "list-in-progress-1785761751598-2",
+                "autoMovedToDone": true
+              },
+              {
+                "id": "card-c02c745adfc0",
+                "title": "check",
+                "description": "",
+                "labels": [
+                  {
+                    "id": "label-afb52584dbf2",
+                    "name": "test",
+                    "color": "#f57c00",
+                    "system": false
+                  }
+                ],
+                "dueDate": "",
+                "checklist": [
+                  {
+                    "id": "chk-1787387439587",
+                    "text": "check",
+                    "completed": true
+                  },
+                  {
+                    "id": "chk-1787387593906",
+                    "text": "done",
+                    "completed": true
+                  }
+                ],
+                "cover": "",
+                "members": [
+                  "R"
+                ],
+                "comments": [],
+                "subtasks": [
+                  {
+                    "id": "sub-1787387445497",
+                    "title": "checl",
+                    "status": "done"
+                  }
+                ],
+                "typeOfWork": "bug",
+                "completed": true,
+                "status": "done",
+                "previousListId": "list-in-progress-1785761751598-2",
+                "autoMovedToDone": true
+              },
+              {
+                "id": "card-ee07442afb10",
+                "title": "title",
+                "description": "",
+                "labels": [],
+                "dueDate": "",
+                "checklist": [
+                  {
+                    "id": "chk-1787387699383",
+                    "text": "testq",
+                    "completed": true
+                  },
+                  {
+                    "id": "chk-1787387703675",
+                    "text": "tests",
+                    "completed": true
+                  },
+                  {
+                    "id": "chk-1787387707598",
+                    "text": "testt",
+                    "completed": true
+                  }
+                ],
+                "cover": "",
+                "members": [
+                  "R"
+                ],
+                "comments": [],
+                "subtasks": [
+                  {
+                    "id": "sub-1787387714109",
+                    "title": "check q",
+                    "status": "done"
+                  },
+                  {
+                    "id": "sub-1787387721661",
+                    "title": "check 2",
+                    "status": "done"
+                  }
+                ],
+                "typeOfWork": "task",
+                "completed": true,
+                "status": "done",
+                "previousListId": "list-testing-1785761751598-3",
+                "autoMovedToDone": true
               }
             ]
           },
           {
-            "id": "list-done-1785761751598-4",
-            "title": "Done",
-            "color": "#064e3b",
+            "id": "list-2b3ac1614e34",
+            "title": "todo",
+            "color": "#171717",
             "isInbox": false,
             "cards": []
           }
