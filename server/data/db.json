@@ -47,7 +47,7 @@
   ],
   "sessions": {
     "020c8a3aa65233ec9d5ee85d2647b8754c00876a5e8f428ffa15b2d9528f650f": "user-62d74422d479a791",
-    "26735f7aa7e5c2fb5224b3a7dbd760e069d537899fdda6f115793081d0c50b07": "user-501516d8770a0e81"
+    "6bc870b47f5989e6c2f7d17cc0465f88540f6800bef9d0a7365ccf02f1be97df": "user-62d74422d479a791"
   },
   "workspaces": {
     "user-62d74422d479a791": {
@@ -73,40 +73,28 @@
                   "R"
                 ],
                 "comments": []
-              }
-            ]
-          },
-          {
-            "id": "list-in-progress-1785761751598-2",
-            "title": "In Progress",
-            "color": "#0c4a6e",
-            "isInbox": false,
-            "cards": [
+              },
               {
-                "id": "card-61edcd4a1ae5",
-                "title": "My TaskNova",
-                "description": "",
+                "id": "card-6d1d25272b1d",
+                "title": "ui design",
+                "description": "create a404 error page",
                 "labels": [],
-                "dueDate": "2026-08-18",
+                "dueDate": "2026-08-26",
                 "checklist": [
                   {
-                    "id": "chk-1785816679974",
-                    "text": "name chnage",
+                    "id": "chk-1787157298681",
+                    "text": "check",
                     "completed": true
                   },
                   {
-                    "id": "chk-1785816694327",
-                    "text": "check the login page",
-                    "completed": true
+                    "id": "chk-1787157305905",
+                    "text": "mobil view",
+                    "completed": true,
+                    "description": "mobile  view check"
                   },
                   {
-                    "id": "chk-1785993689673",
-                    "text": "done",
-                    "completed": false
-                  },
-                  {
-                    "id": "chk-1786024710189",
-                    "text": "done feature",
+                    "id": "chk-1787157321356",
+                    "text": "tablet view",
                     "completed": false
                   }
                 ],
@@ -114,21 +102,31 @@
                 "members": [
                   "R"
                 ],
-                "comments": []
+                "comments": [],
+                "subtasks": [
+                  {
+                    "id": "sub-1787157365285",
+                    "title": "inbox",
+                    "status": "done"
+                  },
+                  {
+                    "id": "sub-1787157376454",
+                    "title": "planner",
+                    "status": "done"
+                  }
+                ],
+                "typeOfWork": "bug",
+                "completed": true,
+                "status": "done",
+                "listId": "list-testing-1785761751598-3",
+                "previousListId": "list-testing-1785761751598-3"
               }
             ]
           },
           {
-            "id": "list-testing-1785761751598-3",
-            "title": "Testing",
-            "color": "#3f2d1d",
-            "isInbox": false,
-            "cards": []
-          },
-          {
-            "id": "list-done-1785761751598-4",
-            "title": "Done",
-            "color": "#064e3b",
+            "id": "list-in-progress-1785761751598-2",
+            "title": "In Progress",
+            "color": "#0c4a6e",
             "isInbox": false,
             "cards": [
               {
@@ -151,6 +149,54 @@
                   {
                     "id": "chk-1786024828878",
                     "text": "fix card color",
+                    "completed": false
+                  }
+                ],
+                "cover": "",
+                "members": [
+                  "R"
+                ],
+                "comments": [],
+                "subtasks": [],
+                "typeOfWork": "bug",
+                "completed": true,
+                "status": "done",
+                "listId": "list-done-1785761751598-4",
+                "previousListId": "list-in-progress-1785761751598-2"
+              },
+              {
+                "id": "card-61edcd4a1ae5",
+                "title": "My TaskNova",
+                "description": "",
+                "labels": [
+                  {
+                    "id": "label-afb52584dbf2",
+                    "name": "test",
+                    "color": "#f57c00",
+                    "system": false
+                  }
+                ],
+                "dueDate": "2026-08-18",
+                "checklist": [
+                  {
+                    "id": "chk-1785816679974",
+                    "text": "name chnage",
+                    "completed": true,
+                    "description": "fsdf"
+                  },
+                  {
+                    "id": "chk-1785816694327",
+                    "text": "check the login page",
+                    "completed": true
+                  },
+                  {
+                    "id": "chk-1785993689673",
+                    "text": "done",
+                    "completed": true
+                  },
+                  {
+                    "id": "chk-1786024710189",
+                    "text": "done feature",
                     "completed": true
                   }
                 ],
@@ -158,9 +204,69 @@
                 "members": [
                   "R"
                 ],
-                "comments": []
+                "comments": [],
+                "subtasks": [],
+                "typeOfWork": "task",
+                "completed": false,
+                "status": "done",
+                "listId": "list-done-1785761751598-4",
+                "previousListId": "list-in-progress-1785761751598-2"
               }
             ]
+          },
+          {
+            "id": "list-testing-1785761751598-3",
+            "title": "Testing",
+            "color": "#3f2d1d",
+            "isInbox": false,
+            "cards": [
+              {
+                "id": "card-1787206464374",
+                "title": "test",
+                "description": "sprint check\n",
+                "labels": [],
+                "dueDate": "",
+                "checklist": [],
+                "comments": [],
+                "subtasks": [],
+                "typeOfWork": "bug",
+                "sprintId": "sprint-1787206452622",
+                "completed": false
+              }
+            ]
+          },
+          {
+            "id": "list-done-1785761751598-4",
+            "title": "Done",
+            "color": "#064e3b",
+            "isInbox": false,
+            "cards": []
+          }
+        ],
+        "labels": [
+          {
+            "id": "label-afb52584dbf2",
+            "name": "test",
+            "color": "#f57c00",
+            "system": false
+          }
+        ],
+        "sprints": [
+          {
+            "id": "sprint-1",
+            "name": "Sprint 1",
+            "startDate": "2026-07-06",
+            "endDate": "2026-07-11",
+            "description": "Completing the Employee authentication process...",
+            "status": "completed"
+          },
+          {
+            "id": "sprint-1787206452622",
+            "name": "Sprint 2",
+            "startDate": "2026-08-20",
+            "endDate": "2026-08-27",
+            "description": "Focusing on backlog items and deliverables.",
+            "status": "active"
           }
         ]
       }
@@ -449,7 +555,54 @@
             "title": "Inbox",
             "color": "#1e293b",
             "isInbox": true,
-            "cards": []
+            "cards": [
+              {
+                "id": "card-50f65584c3bb",
+                "title": "test",
+                "description": "test level 1",
+                "labels": [],
+                "dueDate": "2026-08-25",
+                "checklist": [],
+                "cover": "",
+                "members": [
+                  "R"
+                ],
+                "comments": [],
+                "subtasks": [],
+                "typeOfWork": "task"
+              },
+              {
+                "id": "card-f98080fb1126",
+                "title": "test2",
+                "description": "",
+                "labels": [],
+                "dueDate": "",
+                "checklist": [],
+                "cover": "",
+                "members": [
+                  "R"
+                ],
+                "comments": []
+              },
+              {
+                "id": "card-1787148636060",
+                "title": "test",
+                "description": "",
+                "labels": [],
+                "dueDate": "",
+                "checklist": [
+                  {
+                    "id": "chk-1787156846342",
+                    "text": "jkh",
+                    "completed": true
+                  }
+                ],
+                "comments": [],
+                "subtasks": [],
+                "typeOfWork": "task",
+                "sprintId": "sprint-1787146174503"
+              }
+            ]
           },
           {
             "id": "list-backlog-1786253765504-0",
@@ -458,15 +611,90 @@
             "isInbox": false,
             "cards": [
               {
+                "id": "card-bcd90172263d",
+                "title": "ui design",
+                "description": "creating a 404 error page",
+                "labels": [
+                  {
+                    "id": "label-92f4c308f8d0",
+                    "name": "ui",
+                    "color": "#6c4b4b",
+                    "system": false
+                  },
+                  {
+                    "id": "label-18105ec70590",
+                    "name": "important",
+                    "color": "#eab308",
+                    "system": false
+                  }
+                ],
+                "dueDate": "2026-08-25",
+                "checklist": [
+                  {
+                    "id": "chk-1787121307901",
+                    "text": "404 structure",
+                    "completed": true
+                  },
+                  {
+                    "id": "chk-1787121319581",
+                    "text": "ui design",
+                    "completed": true,
+                    "description": "design a  attractive  page"
+                  },
+                  {
+                    "id": "chk-1787121331315",
+                    "text": "responsive",
+                    "completed": false,
+                    "description": "checking mobile and tablet view"
+                  }
+                ],
+                "cover": "",
+                "members": [
+                  "R"
+                ],
+                "comments": [],
+                "subtasks": [
+                  {
+                    "id": "sub-1787121445977",
+                    "title": "mobile view",
+                    "status": "in_progress",
+                    "description": "make it mobile view"
+                  },
+                  {
+                    "id": "sub-1787121456543",
+                    "title": "tablet view",
+                    "status": "in_progress"
+                  },
+                  {
+                    "id": "sub-1787121494378",
+                    "title": "checking",
+                    "status": "done"
+                  }
+                ],
+                "typeOfWork": "subtask"
+              },
+              {
                 "id": "card-60b0604e9d63",
                 "title": "backlogs",
-                "description": "",
-                "labels": [],
-                "dueDate": "",
+                "description": "checking level1 ",
+                "labels": [
+                  {
+                    "id": "label-18105ec70590",
+                    "name": "important",
+                    "color": "#eab308",
+                    "system": false
+                  }
+                ],
+                "dueDate": "2026-08-24",
                 "checklist": [
                   {
                     "id": "chk-1786254276387",
                     "text": "hlo hii",
+                    "completed": true
+                  },
+                  {
+                    "id": "chk-1787122260300",
+                    "text": "check",
                     "completed": false
                   }
                 ],
@@ -474,7 +702,21 @@
                 "members": [
                   "R"
                 ],
-                "comments": []
+                "comments": [],
+                "subtasks": [
+                  {
+                    "id": "sub-1787121588165",
+                    "title": "testing level1",
+                    "status": "done"
+                  },
+                  {
+                    "id": "sub-1787121599922",
+                    "title": "testing 3",
+                    "status": "done"
+                  }
+                ],
+                "typeOfWork": "bug",
+                "sprintId": "sprint-1"
               }
             ]
           },
@@ -505,6 +747,33 @@
             "color": "#064e3b",
             "isInbox": false,
             "cards": []
+          }
+        ],
+        "sprints": [
+          {
+            "id": "sprint-1",
+            "name": "Sprint 1",
+            "startDate": "2026-07-06",
+            "endDate": "2026-07-11",
+            "description": "Completing the Employee authentication process...",
+            "status": "completed",
+            "isHidden": false
+          },
+          {
+            "id": "sprint-1787146174503",
+            "name": "Sprint 2",
+            "startDate": "2026-08-19",
+            "endDate": "2026-08-26",
+            "description": "Focusing on backlog items and deliverables.",
+            "status": "active"
+          }
+        ],
+        "labels": [
+          {
+            "id": "label-18105ec70590",
+            "name": "important",
+            "color": "#eab308",
+            "system": false
           }
         ]
       }

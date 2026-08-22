@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="JDSS Services — Page not found." />
+  <title>Oops! Page Not Found | JDSS Services</title>
+  <link rel="stylesheet" href="./404/style.css?v=2" />
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Cinematic Layered Container -->
+  <div class="cinematic-container">
+
+    <!-- ==========================================
+         LAYER 1: SKY & ENVIRONMENT BACKGROUND
+         ========================================== -->
+    <div class="parallax-layer layer-bg" id="layerBg">
+      <img src="./404_cinematic_bg.jpg?v=2" class="bg-image" alt="Cinematic Security Facility Landscape" />
+    </div>
+
+    <!-- ==========================================
+         LAYER 2: ATMOSPHERIC FOG & DRIFTING CLOUDS
+         ========================================== -->
+    <div class="parallax-layer layer-fog" id="layerFog">
+      <div class="fog-bank fog-slow"></div>
+      <div class="fog-bank fog-mid"></div>
+    </div>
+
+    <!-- ==========================================
+         LAYER 3: FUTURISTIC SIGNBOARD OVERLAYS
+         ========================================== -->
+    <div class="parallax-layer layer-structure" id="layerStructure">
+      <!-- Glow effect overlay placed directly on the gateway sign -->
+      <div class="gate-glow"></div>
+      
+      <!-- Flashing safety alert light -->
+      <div class="checkpoint-flasher"></div>
+
+      <!-- Cyber security CCTV scanner sweep -->
+      <div class="cctv-scan">
+        <div class="scan-laser"></div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         LAYER 4: FOREGROUND ANIMATED ASSETS
+         ========================================== -->
+    <div class="parallax-layer layer-foreground" id="layerForeground">
+      <!-- Wind-swaying foreground flowers/grass silhouettes -->
+      <div class="fore-sway-container">
+        <span class="sway-stem stem-1"></span>
+        <span class="sway-stem stem-2"></span>
+        <span class="sway-stem stem-3"></span>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         LAYER 5: FLOATING PETALS, LEAVES & PARTICLES
+         ========================================== -->
+    <div class="particles-layer">
+      <div id="driftingPetals"></div>
+      <div id="cyberParticles"></div>
+    </div>
+
+    <!-- ==========================================
+         MINIMAL floating HEADER BRANDING
+         ========================================== -->
+    <header class="minimal-header">
+      <a href="./first.html#home" class="minimal-brand">
+        <img src="jdss.png" class="brand-logo-img" alt="JDSS Logo" />
+        <div class="brand-text-block">
+          <span class="brand-name">JAI DURGA</span>
+          <span class="brand-tag">Security & Manpower Services</span>
+        </div>
+      </a>
+    </header>
+
+    <!-- ==========================================
+         LAYER 6: INTEGRATED ENVIRONMENT TEXT CONTENT
+         ========================================== -->
+    <div class="parallax-layer layer-content" id="layerContent">
+      <main class="scene-content">
+        <!-- Giant 404 embedded directly in negative sky space -->
+        <h1 class="giant-404">404</h1>
+        
+        <h2 class="scene-heading">Oops! Page Not Found</h2>
+        <p class="scene-description">
+          The page you're looking for may have been moved, deleted, or is temporarily unavailable.
+        </p>
+
+        <!-- Embedded Call to Actions -->
+        <div class="scene-actions">
+          <a href="./first.html#home" class="btn-scene btn-primary">
+            <span class="btn-icon">⌂</span>
+            Back to Home
+          </a>
+          <button onclick="window.history.back()" class="btn-scene btn-secondary">
+            <span class="btn-icon">←</span>
+            Go Back
+          </button>
+        </div>
+      </main>
+    </div>
+
+  </div>
+
+  <script src="./404/index.js"></script>
+</body>
+</html>

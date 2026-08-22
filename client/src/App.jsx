@@ -24,6 +24,18 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCard, setActiveCard] = useState(null);
   const [activeCardListId, setActiveCardListId] = useState(null);
+  const [autoMoveSetting, setAutoMoveSetting] = useState(() => {
+    const saved = localStorage.getItem('autoMoveSetting');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const handleToggleAutoMove = () => {
+    setAutoMoveSetting((prev) => {
+      const next = !prev;
+      localStorage.setItem('autoMoveSetting', String(next));
+      return next;
+    });
+  };
 
   const [authModal, setAuthModal] = useState(null); // null | 'login' | 'signup'
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -255,9 +267,35 @@ export default function App() {
         {isAuthenticated ? (
           <>
             {/* Board Title Bar */}
-            <div className="board-bar">
+            {/* Board Title Bar */}
+            <div className="board-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '20px' }}>
               <div className="board-title">
                 <span>{board.title}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <label style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: 'var(--ln-text)',
+                  userSelect: 'none'
+                }}>
+                  <input
+                    type="checkbox"
+                    checked={autoMoveSetting}
+                    onChange={handleToggleAutoMove}
+                    style={{
+                      width: '15px',
+                      height: '15px',
+                      cursor: 'pointer',
+                      accentColor: '#10b981'
+                    }}
+                  />
+                  <span>Auto Move Completed Tasks</span>
+                </label>
               </div>
             </div>
 
@@ -320,6 +358,7 @@ export default function App() {
                 onUpdateCard={handleUpdateCard}
                 onDeleteCard={handleDeleteCard}
                 onMoveCard={handleMoveCard}
+                autoMoveSetting={autoMoveSetting}
               />
             )}
 

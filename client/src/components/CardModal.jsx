@@ -119,7 +119,6 @@ export default function CardModal({
       setActiveDescChecklistId(null);
       setActiveDescSubtaskId(null);
       setEditingDescText('');
-      evaluateWorkflowMove(card);
     } else {
       // Same card updated: sync states if they have not been edited locally (keeps user inputs safe)
       if (card.title !== prevCard.title && title === prevCard.title) {
@@ -175,7 +174,7 @@ export default function CardModal({
   // Save card
   // ------------------------------------------------------------
   const handleSaveAll = async () => {
-    await onUpdateCard(card.id, {
+    const freshCard = await onUpdateCard(card.id, {
       title,
       description,
       dueDate,
@@ -183,11 +182,15 @@ export default function CardModal({
       labels,
       comments,
       subtasks,
-      typeOfWork
+      typeOfWork,
+      previousListId: card.previousListId,
+      autoMovedToDone: card.autoMovedToDone
     });
 
     if (targetListId !== listId) {
       await onMoveCard(card.id, listId, targetListId);
+    } else if (freshCard) {
+      await evaluateWorkflowMove(freshCard);
     }
 
     onClose();
@@ -211,29 +214,25 @@ export default function CardModal({
     setNewChecklistItem('');
   };
 
-  const evaluateWorkflowMove = async (freshCard) => {
+  const evaluateWorkflowMove = async (freshCard, updatedChecklist = null) => {
     if (!freshCard) {
       console.log('[AutoMove] No fresh card returned from update');
       return;
     }
 
-    const currentChecklist = freshCard.checklist || [];
-    const currentSubtasks = freshCard.subtasks || [];
+    const currentChecklist = updatedChecklist || freshCard.checklist || [];
+    const totalItems = currentChecklist.length;
+    const completedItems = currentChecklist.filter(
+      (item) => item.completed === true || item.completed === 'true'
+    ).length;
 
-    const totalTasks = currentChecklist.length;
-    const completedTasks = currentChecklist.filter((item) => item.completed === true || item.completed === 'true').length;
-
-    const totalSubs = currentSubtasks.length;
-    const completedSubs = currentSubtasks.filter((sub) => sub.status?.toLowerCase() === 'done').length;
-
-    const hasTasks = totalTasks > 0;
-    const tasksComplete = hasTasks && (completedTasks === totalTasks);
-
-    const hasSubtasks = totalSubs > 0;
-    const subtasksComplete = hasSubtasks && (completedSubs === totalSubs);
+    const is100Percent = totalItems > 0 && completedItems === totalItems;
 
     const doneList = lists.find((l) => l.title?.toLowerCase() === 'done');
-    const doneListId = doneList ? doneList.id : 'NOT_FOUND';
+    if (!doneList) {
+      console.log('[AutoMove] Done column not found on the board.');
+      return;
+    }
 
     // Find the correct current list ID of the card from lists prop
     let currentListId = listId;
@@ -242,41 +241,52 @@ export default function CardModal({
       currentListId = parentList.id;
     }
 
+    const isInDone = currentListId === doneList.id;
+
     console.log('[AutoMove] Evaluation for Card ID:', freshCard.id);
-    console.log('[AutoMove] Current List ID:', currentListId, 'Done List ID:', doneListId);
-    console.log('[AutoMove] Associated Tasks count:', completedTasks, '/', totalTasks, 'Complete:', tasksComplete);
-    console.log('[AutoMove] Subtasks count:', completedSubs, '/', totalSubs, 'Complete:', subtasksComplete);
+    console.log('[AutoMove] Current List ID:', currentListId, 'Done List ID:', doneList.id);
+    console.log('[AutoMove] Checklist items count:', completedItems, '/', totalItems, 'Complete:', is100Percent);
 
-    if (!doneList) {
-      console.log('[AutoMove] Done column not found on the board.');
-      return;
-    }
+    if (is100Percent) {
+      if (isInDone) {
+        console.log('[AutoMove] Card is already in Done column. Skipping move.');
+        return;
+      }
+      
+      if (autoMoveSetting) {
+        console.log('[AutoMove] Condition met! Moving card to Done...');
+        
+        await onUpdateCard(freshCard.id, {
+          completed: true,
+          status: 'done',
+          previousListId: currentListId,
+          autoMovedToDone: true
+        });
 
-    if (currentListId === doneList.id) {
-      console.log('[AutoMove] Card is already in Done column. Skipping move.');
-      return;
-    }
-
-    let shouldMove = false;
-    if (hasTasks && hasSubtasks) {
-      shouldMove = tasksComplete && subtasksComplete;
-      console.log('[AutoMove] Both tasks and subtasks present. shouldMove =', shouldMove);
-    } else if (hasTasks) {
-      shouldMove = tasksComplete;
-      console.log('[AutoMove] Only tasks present. shouldMove =', shouldMove);
-    } else if (hasSubtasks) {
-      shouldMove = subtasksComplete;
-      console.log('[AutoMove] Only subtasks present. shouldMove =', shouldMove);
+        await onMoveCard(freshCard.id, currentListId, doneList.id);
+        console.log('[AutoMove] onMoveCard API completed successfully.');
+      } else {
+        console.log('[AutoMove] Checklist 100% but autoMoveSetting is OFF. Card remains in current list.');
+      }
     } else {
-      console.log('[AutoMove] Neither tasks nor subtasks present. shouldMove = false');
-    }
+      // Checklist < 100%
+      if (isInDone && freshCard.autoMovedToDone && freshCard.previousListId) {
+        console.log('[AutoMove] Checklist < 100% and card was auto-moved. Restoring to previous column:', freshCard.previousListId);
+        
+        const targetListId = freshCard.previousListId;
+        
+        await onUpdateCard(freshCard.id, {
+          completed: false,
+          status: 'todo',
+          previousListId: null,
+          autoMovedToDone: false
+        });
 
-    if (shouldMove) {
-      console.log('[AutoMove] Condition met! Moving card to Done...');
-      await onMoveCard(freshCard.id, currentListId, doneList.id);
-      console.log('[AutoMove] onMoveCard API completed successfully.');
-    } else {
-      console.log('[AutoMove] Condition not met. Card remains in current list.');
+        await onMoveCard(freshCard.id, currentListId, targetListId);
+        console.log('[AutoMove] Restored card back to previous list successfully.');
+      } else {
+        console.log('[AutoMove] Condition not met. Card remains in current list.');
+      }
     }
   };
 
@@ -297,10 +307,12 @@ export default function CardModal({
       labels,
       comments,
       subtasks,
-      typeOfWork
+      typeOfWork,
+      previousListId: card.previousListId,
+      autoMovedToDone: card.autoMovedToDone
     });
 
-    await evaluateWorkflowMove(freshCard);
+    await evaluateWorkflowMove(freshCard, updated);
   };
 
   // ------------------------------------------------------------
