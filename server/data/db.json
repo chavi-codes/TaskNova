@@ -149,7 +149,7 @@
                   {
                     "id": "chk-1786024828878",
                     "text": "fix card color",
-                    "completed": false
+                    "completed": true
                   }
                 ],
                 "cover": "",
@@ -162,7 +162,8 @@
                 "completed": true,
                 "status": "done",
                 "listId": "list-done-1785761751598-4",
-                "previousListId": "list-in-progress-1785761751598-2"
+                "previousListId": "list-in-progress-1785761751598-2",
+                "autoMovedToDone": true
               },
               {
                 "id": "card-61edcd4a1ae5",
@@ -207,10 +208,11 @@
                 "comments": [],
                 "subtasks": [],
                 "typeOfWork": "task",
-                "completed": false,
+                "completed": true,
                 "status": "done",
                 "listId": "list-done-1785761751598-4",
-                "previousListId": "list-in-progress-1785761751598-2"
+                "previousListId": "list-in-progress-1785761751598-2",
+                "autoMovedToDone": true
               }
             ]
           },

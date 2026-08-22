@@ -253,7 +253,8 @@ export default function CardModal({
         return;
       }
       
-      if (autoMoveSetting) {
+      const isAutoMoveEnabled = autoMoveSetting === true || autoMoveSetting === 'true';
+      if (isAutoMoveEnabled) {
         console.log('[AutoMove] Condition met! Moving card to Done...');
         
         await onUpdateCard(freshCard.id, {
